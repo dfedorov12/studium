@@ -74,8 +74,11 @@ const MODULES = [
   {id:'VM2', phase:'abschluss', name:'Seminar zur Masterarbeit', ects:4, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 % + Vorkonzept', deps:['BPM1','VM1'],
    tip:'Fester 6-Wochen-Ablauf bis zur Vorkonzept-Abgabe.',
    topics:[{g:'Inhalte', items:['Quantitative & qualitative Forschungsmethoden','Wissenschaftlicher Schreibstil („Goldene Regeln“)','Themenfindung & Eingrenzung','Vorkonzept erstellen','Recherchedatenbanken, Citavi/Zotero']}]},
-  {id:'MA', phase:'abschluss', name:'Masterarbeit', ects:null, exam:'lt. Studien-/Prüfungsordnung (inkl. ECTS)', deps:['VM2']}
+  {id:'MA', phase:'abschluss', name:'Masterarbeit', ects:null, exam:'lt. Studien-/Prüfungsordnung', deps:['VM2'],
+   tip:'ECTS werden automatisch als Rest auf 120 berechnet — bei Bedarf im Modul manuell überschreiben.'}
 ];
+/* Gesamtumfang des Professional-MBA */
+const PROGRAM_ECTS = 120;
 
 const MILESTONES = [
   {m:'M1–2',  mm:2,  t:'BPM1 abgeschlossen (beide MC-Prüfungen)'},

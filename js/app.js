@@ -217,7 +217,11 @@ function mdRender(src){
 
 /* ════════════════ Helfer ════════════════ */
 function isActive(m){ return m.wahl ? !!state.wahl[m.id] : true; }
-function ectsOf(m){ return m.id==='MA' ? (parseInt(state.maEcts)||0) : m.ects; }
+function autoMaEcts(){
+  const others = MODULES.filter(m=>m.id!=='MA' && isActive(m)).reduce((a,m)=>a+m.ects,0);
+  return Math.max(0, PROGRAM_ECTS - others);
+}
+function ectsOf(m){ return m.id==='MA' ? (parseInt(state.maEcts)||autoMaEcts()) : m.ects; }
 function unmetDeps(m){ return (m.deps||[]).filter(d => state.modules[d].status!=='bestanden'); }
 function topicList(m){ return (m.topics||[]).flatMap((g,gi)=>g.items.map((t,ti)=>({key:gi+'.'+ti, t, g:g.g}))); }
 function topicStat(m){
@@ -253,7 +257,7 @@ function render(){
   const graded = active.filter(m=>state.modules[m.id].status==='bestanden' && state.modules[m.id].grade);
   const avg = graded.length ? (graded.reduce((a,m)=>a+Number(state.modules[m.id].grade)*ectsOf(m),0)/graded.reduce((a,m)=>a+ectsOf(m),0)) : null;
   document.getElementById('stats').innerHTML = `
-    <div class="stat"><div class="k">ECTS bestanden</div><div class="v">${done} <small>/ ${total}${state.maEcts?'':' + MA'}</small></div></div>
+    <div class="stat"><div class="k">ECTS bestanden</div><div class="v">${done} <small>/ ${total}</small></div></div>
     <div class="stat"><div class="k">Module bestanden</div><div class="v">${doneCount} <small>/ ${active.length}</small></div></div>
     <div class="stat"><div class="k">Aktuell laufend</div><div class="v">${runCount}</div></div>
     <div class="stat"><div class="k">Ø Note (ECTS-gew.)</div><div class="v">${avg?avg.toFixed(2):'–'}</div></div>
@@ -347,7 +351,7 @@ function card(m){
     <div class="head">
       <span class="chip">${esc(m.id)}</span>
       <span class="name">${esc(m.name)}</span>
-      <span class="ects">${m.id==='MA' ? (state.maEcts?state.maEcts+' ECTS':'ECTS ?') : m.ects+' ECTS'}</span>
+      <span class="ects">${m.id==='MA' ? ectsOf(m)+' ECTS'+(state.maEcts?'':' (auto)') : m.ects+' ECTS'}</span>
     </div>
     <div class="meta"><b>Prüfung:</b> ${esc(m.exam)}${m.deps.length?` · <b>setzt voraus:</b> ${m.deps.join(', ')}`:''}</div>
     ${m.tip?`<div class="hint">💡 ${esc(m.tip)}</div>`:''}
@@ -416,7 +420,7 @@ function renderModal(){
       </select>
       <label style="font-size:.7rem;color:var(--mut);font-weight:600">Abschluss <input type="month" id="m-date" value="${esc(st.date)}"/></label>
       <label style="font-size:.7rem;color:var(--mut);font-weight:600">Prüfungstermin <input type="date" id="m-exam" value="${esc(st.examDate)}"/></label>
-      ${m.id==='MA'?`<label style="font-size:.7rem;color:var(--mut);font-weight:600">ECTS <input type="number" id="m-maects" min="1" max="40" value="${esc(state.maEcts)}" style="width:58px;padding:4px 6px"/></label>`:''}
+      ${m.id==='MA'?`<label style="font-size:.7rem;color:var(--mut);font-weight:600">ECTS <input type="number" id="m-maects" min="1" max="40" value="${esc(state.maEcts)}" placeholder="${autoMaEcts()}" title="leer = automatisch Rest auf ${PROGRAM_ECTS}" style="width:58px;padding:4px 6px"/></label>`:''}
     </div>
     <div class="tabs">${tabs.map(t=>`<button class="tab ${t[0]===modalTab?'active':''}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</div>
     <div class="tabbody" id="tabbody"></div>`;

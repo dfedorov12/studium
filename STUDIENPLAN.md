@@ -10,6 +10,7 @@ Basis: Modulbeschreibung Version 01/2025 (MODULB_1.pdf)
 | | |
 |---|---|
 | Abschluss | MBA (Masterniveau, Level 7 NQR) |
+| Umfang | **120 ECTS** (Professional-Format) |
 | Format | Online-Module (Selbststudium) + Live-Online-Module (ILV, u. a. WBS LearnSpace 3D® / WBS eCampus) |
 | Sprache | Deutsch |
 | Struktur | Basisstudium (BWL-Teil) → Fachstudium (Security-Teil) → Vertiefungsprojekt → Masterarbeit |
@@ -49,9 +50,9 @@ Jede LV muss einzeln positiv abgeschlossen werden.
 | **VM2** Seminar zur Masterarbeit (6-Wochen-Modul, inkl. Vorkonzept) | 4 | BPM1, VM1 | Gruppenarbeit (40 %) + mündl. Prüfung (60 %) |
 | **Masterarbeit** | * | VM2 | *nicht in diesem Handbuch beschrieben* |
 
-\* Die Masterarbeit ist im Modulhandbuch nicht enthalten; ECTS und Ablauf (inkl. Defensio) stehen in der Studien-/Prüfungsordnung.
+\* Die Masterarbeit ist im Modulhandbuch nicht enthalten; Ablauf (inkl. Defensio) steht in der Studien-/Prüfungsordnung.
 
-**Dokumentierte ECTS-Summe:** 24 (Pflicht-Basis) + 6–12 (Wahl) + 42 (FM1–6) + 2 + 4 + 3 + 12 = **93–99 ECTS** + Masterarbeit.
+**ECTS-Bilanz (Gesamtumfang 120 ECTS):** 24 (Pflicht-Basis) + 6–12 (Wahl) + 42 (FM1–6) + 2 + 4 + 3 + 12 = **93–99 ECTS** dokumentierte Module → Masterarbeit als Rest **27 ECTS** (bei einem Wahlmodul) bzw. **21 ECTS** (bei beiden).
 
 ---
 
@@ -95,7 +96,7 @@ VM1 + BPM1 ──► VM2 ──► Masterarbeit
 
 ## 5. Aufwandsplanung
 
-- 93–99+ ECTS × 25 h ≈ **2.300–2.500+ Std.** → bei 24 Monaten ≈ **20–25 Std./Woche** nominal; realistisch mit Berufspraxis-Vorsprung eher 12–18 Std./Woche, aber Spitzen bei Projektarbeiten/Prüfungswochen.
+- 120 ECTS × 25 h = **3.000 Std.** nominal → bei 24 Monaten ≈ **28 Std./Woche** rechnerisch; berufsbegleitend real deutlich weniger (Berufspraxis zählt in den Workload hinein) — plane **15–20 Std./Woche** mit Spitzen bei Projektarbeiten, Prüfungswochen und der Masterarbeit-Phase.
 - **Fixtermine** nur bei Live-Online-Modulen (VM1, FM1–6, VPS, VM2) — Basisstudium komplett flexibel → Basismodule in ruhige Arbeitsphasen legen.
 - Jede Modulnote im Basisstudium hängt zu 60 % an der schriftlichen Projektarbeit → wissenschaftliches Schreiben (Zitation! Citavi/Zotero ab Tag 1 nutzen) ist der größte Hebel für den Notenschnitt.
 - Fachmodule: 60 % mündliche Abschlussprüfung, 40 % Gruppenarbeit → PeerGroup aktiv pflegen, Gruppentermine früh blocken.
