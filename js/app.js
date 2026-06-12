@@ -5,11 +5,13 @@ const THEME_KEY = 'mba-theme';
 
 function defaultState(){
   const s = {v:2, savedAt:'', start:'', maEcts:'', lastBackup:'',
-    wahl:{BWM1:true, BWM2:false}, modules:{}, miles:{}, topics:{}, notes:{}, projects:{}, cards:[]};
+    wahl:{BWM1:true, BWM2:false}, modules:{}, miles:{}, topics:{}, notes:{}, projects:{}, cards:[],
+    lit:{}, peer:{contacts:[], meetings:[], tasks:[]}};
   MODULES.forEach(m=>{
     s.modules[m.id] = {status:'offen', grade:'', date:'', examDate:'', notes:''};
     s.topics[m.id] = {};
     s.projects[m.id] = [];
+    s.lit[m.id] = {read:{}, own:[]};
   });
   // Standard-Projekte vorbefüllen
   Object.entries(DEFAULT_PROJECTS).forEach(([mid,p])=>{
@@ -40,13 +42,15 @@ function load(){
 function migrate(data){
   const def = defaultState();
   const s = Object.assign(def, data);
-  ['modules','topics','projects','notes'].forEach(k=>{ s[k] = Object.assign({}, def[k], data[k]||{}); });
+  ['modules','topics','projects','notes','lit'].forEach(k=>{ s[k] = Object.assign({}, def[k], data[k]||{}); });
+  s.peer = Object.assign({contacts:[], meetings:[], tasks:[]}, data.peer||{});
   // v1 → v2: LV-Checkboxen entfallen (ersetzt durch Themenbaum); fehlende Modul-Felder auffüllen
   MODULES.forEach(m=>{
     s.modules[m.id] = Object.assign({status:'offen',grade:'',date:'',examDate:'',notes:''}, s.modules[m.id]||{});
     delete s.modules[m.id].lv;
     if(!s.topics[m.id]) s.topics[m.id] = {};
     if(!s.projects[m.id]) s.projects[m.id] = def.projects[m.id]||[];
+    if(!s.lit[m.id]) s.lit[m.id] = {read:{}, own:[]};
   });
   s.cards = Array.isArray(data.cards) ? data.cards : [];
   s.v = 2;
@@ -80,22 +84,34 @@ async function connectFolder(){
     dirHandle = await window.showDirectoryPicker({mode:'readwrite'});
     await idbSet('dir', dirHandle);
     await fsLoadOrSeed();
+    await scanNotes();
     renderFsBar(); render();
     toast('Ordner „'+dirHandle.name+'“ verbunden — Autosave aktiv.');
   }catch(e){ if(e.name!=='AbortError') toast('Ordner-Zugriff fehlgeschlagen: '+e.message); }
+}
+/* Notizen-Cache für die Volltextsuche */
+let notesCache = {};
+async function scanNotes(){
+  if(!dirHandle) return;
+  for(const m of MODULES){
+    try{
+      const t = await fsReadNote(m.id);
+      if(t!==null) notesCache[m.id] = t;
+    }catch(e){}
+  }
 }
 async function restoreFolder(){
   if(!hasFS) return;
   try{
     const h = await idbGet('dir');
     if(!h) return;
-    if(await h.queryPermission({mode:'readwrite'}) === 'granted'){ dirHandle = h; await fsLoadOrSeed(); }
+    if(await h.queryPermission({mode:'readwrite'}) === 'granted'){ dirHandle = h; await fsLoadOrSeed(); await scanNotes(); }
     else {
       // Berechtigung braucht eine User-Geste → Reconnect-Button anbieten
       const bar = document.getElementById('fsbar-note');
       bar.textContent = 'Ordner „'+h.name+'“ gemerkt — klicke „Verbinden“, um den Zugriff zu erneuern.';
       document.getElementById('btn-folder').onclick = async ()=>{
-        if(await h.requestPermission({mode:'readwrite'}) === 'granted'){ dirHandle = h; await fsLoadOrSeed(); renderFsBar(); render(); toast('Ordner wieder verbunden.'); }
+        if(await h.requestPermission({mode:'readwrite'}) === 'granted'){ dirHandle = h; await fsLoadOrSeed(); await scanNotes(); renderFsBar(); render(); toast('Ordner wieder verbunden.'); }
         else connectFolder();
       };
     }
@@ -236,6 +252,13 @@ function fmtMonth(off){
   return MONTHS_DE[d.getMonth()]+' '+d.getFullYear();
 }
 function today(){ return new Date().toISOString().slice(0,10); }
+function monthsElapsed(){
+  if(!state.start) return 0;
+  const [y,mo] = state.start.split('-').map(Number);
+  const now = new Date();
+  return Math.max(0,(now.getFullYear()-y)*12 + (now.getMonth()+1-mo));
+}
+function fmtDate(iso){ return new Date(iso).toLocaleDateString('de-DE'); }
 function dueCards(){ const t = today(); return state.cards.filter(c=>(c.due||t)<=t); }
 function fmtSize(b){ return b>1048576 ? (b/1048576).toFixed(1)+' MB' : Math.max(1,Math.round(b/1024))+' KB'; }
 function toast(msg){
@@ -320,12 +343,86 @@ function render(){
     row.querySelector('input').addEventListener('change', e=>{ state.miles[i]=e.target.checked; save(); });
     ml.appendChild(row);
   });
+
+  renderWeek();
+}
+
+/* ── Wochenplaner: „Diese Woche dran“ ── */
+function renderWeek(){
+  const el = document.getElementById('week');
+  const items = [];
+  const soon = addDays(today(), 14);
+
+  // Überfällige + nächster Meilenstein
+  if(state.start){
+    const month = monthsElapsed()+1; // aktueller Studienmonat (1-basiert)
+    MILESTONES.forEach((ms,i)=>{
+      if(!state.miles[i] && ms.mm < month) items.push({i:'⚠️', t:`Überfällig (${ms.m}): ${ms.t}`});
+    });
+    const ni = MILESTONES.findIndex((ms,i)=>!state.miles[i] && ms.mm >= month);
+    if(ni>=0){
+      const ms = MILESTONES[ni];
+      const open = (ms.mods||[]).filter(id=>{
+        const m = MODULES.find(x=>x.id===id);
+        return m && isActive(m) && state.modules[id].status!=='bestanden';
+      });
+      items.push({i:'🎯', t:`Nächster Meilenstein ${ms.m} (${fmtMonth(ms.mm)}): ${ms.t}`+(open.length?` — dran: ${open.join(', ')}`:''), mod:open[0]});
+    }
+  } else {
+    items.push({i:'💡', t:'Studienstart setzen — dann plane ich dir die Woche.'});
+  }
+
+  // Laufende Module mit offenen Themen
+  MODULES.filter(m=>isActive(m) && state.modules[m.id].status==='laufend').forEach(m=>{
+    const ts = topicStat(m);
+    const open = ts.total - ts.t2;
+    items.push({i:'📖', t:`Weiter an ${m.id} — ${ts.total ? open+' Themen noch nicht „sitzt“' : 'in Arbeit'}`, mod:m.id});
+  });
+
+  // Fällige Lernkarten
+  const due = dueCards().length;
+  if(due) items.push({i:'🃏', t:`${due} Lernkarte(n) fällig`, learn:true});
+
+  // Prüfungen & Abgaben in den nächsten 14 Tagen
+  MODULES.forEach(m=>{
+    const ed = state.modules[m.id].examDate;
+    if(ed && ed>=today() && ed<=soon) items.push({i:'📝', t:`Prüfung ${m.id} am ${fmtDate(ed)}`, mod:m.id});
+    (state.projects[m.id]||[]).forEach(p=>{
+      if(p.deadline && p.deadline>=today() && p.deadline<=soon && p.status!=='Abgegeben' && p.status!=='Bewertet')
+        items.push({i:'📋', t:`Abgabe „${p.title}“ am ${fmtDate(p.deadline)}`, mod:m.id, tab:'projekte'});
+    });
+  });
+
+  // PeerGroup-Termine
+  (state.peer.meetings||[]).forEach(mt=>{
+    if(mt.date && mt.date>=today() && mt.date<=soon) items.push({i:'👥', t:`PeerGroup: ${mt.topic||'Termin'} am ${fmtDate(mt.date)}`, peer:true});
+  });
+
+  el.innerHTML = items.length ? '' : '<div class="mile"><span class="t" style="color:var(--mut)">Nichts Dringendes — gönn dir was. 🎉</span></div>';
+  items.slice(0,8).forEach(it=>{
+    const row = document.createElement('div');
+    row.className = 'mile';
+    if(it.mod || it.learn || it.peer) row.style.cursor = 'pointer';
+    row.innerHTML = `<span style="flex:none">${it.i}</span><span class="t">${esc(it.t)}</span>`;
+    row.onclick = ()=>{
+      if(it.learn) startLearning(null);
+      else if(it.peer) openPeer();
+      else if(it.mod) openModal(it.mod, it.tab);
+    };
+    el.appendChild(row);
+  });
 }
 function matchesSearch(m){
   if(!searchTerm) return true;
   const q = searchTerm.toLowerCase();
   if((m.id+' '+m.name).toLowerCase().includes(q)) return true;
-  return topicList(m).some(x=>x.t.toLowerCase().includes(q));
+  if(topicList(m).some(x=>x.t.toLowerCase().includes(q))) return true;
+  // Volltextsuche in Notizen (Studienordner-Cache bzw. Browser-Kopie)
+  const note = notesCache[m.id] ?? state.notes[m.id] ?? '';
+  if(note.toLowerCase().includes(q)) return true;
+  // Literatur
+  const lit = (m.lit||[]).concat((state.lit[m.id]?.own||[]).map(o=>o.t));
+  return lit.some(l=>l.toLowerCase().includes(q));
 }
 
 function card(m){
@@ -404,7 +501,7 @@ function renderModal(){
   const st = state.modules[m.id];
   const tabs = [];
   if(m.topics) tabs.push(['themen','Themen']);
-  tabs.push(['notizen','Notizen'],['material','Material'],['projekte','Projekte'],['karten','Lernkarten']);
+  tabs.push(['notizen','Notizen'],['material','Material'],['literatur','Literatur'],['projekte','Projekte'],['karten','Lernkarten']);
   if(!tabs.some(t=>t[0]===modalTab)) modalTab = tabs[0][0];
 
   document.getElementById('modal').innerHTML = `
@@ -442,8 +539,53 @@ function renderModal(){
   if(modalTab==='themen') renderTopics(m, body);
   if(modalTab==='notizen') renderNotes(m, body);
   if(modalTab==='material') renderMaterial(m, body);
+  if(modalTab==='literatur') renderLit(m, body);
   if(modalTab==='projekte') renderProjects(m, body);
   if(modalTab==='karten') renderCards(m, body);
+}
+
+/* ── Tab: Literatur ── */
+function renderLit(m, body){
+  const L = state.lit[m.id];
+  body.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'ptodos';
+  if(m.lit){
+    m.lit.forEach((t,i)=>{
+      const read = !!L.read[i];
+      const lab = document.createElement('label');
+      lab.className = read?'c':'';
+      lab.innerHTML = `<input type="checkbox" ${read?'checked':''}/><span>📚 ${esc(t)}</span>`;
+      lab.querySelector('input').onchange = e=>{ L.read[i] = e.target.checked; save(false); renderLit(m, body); };
+      wrap.appendChild(lab);
+    });
+  } else {
+    const ph = document.createElement('div');
+    ph.className = 'placeholder';
+    ph.textContent = 'Lt. Handbuch: „Festlegung der Literatur im laufenden Lehrbetrieb“ — eigene Quellen unten ergänzen.';
+    body.appendChild(ph);
+  }
+  L.own.forEach((o,i)=>{
+    const lab = document.createElement('label');
+    lab.className = o.done?'c':'';
+    lab.innerHTML = `<input type="checkbox" ${o.done?'checked':''}/><span>✏️ ${esc(o.t)}</span><button class="del" title="entfernen">✕</button>`;
+    lab.querySelector('input').onchange = e=>{ o.done = e.target.checked; save(false); renderLit(m, body); };
+    lab.querySelector('.del').onclick = e=>{ e.preventDefault(); L.own.splice(i,1); save(false); renderLit(m, body); };
+    wrap.appendChild(lab);
+  });
+  body.appendChild(wrap);
+  const addrow = document.createElement('div');
+  addrow.className = 'paddrow';
+  addrow.innerHTML = `<input placeholder="Eigene Quelle (Autor: Titel / Link) …"/><button class="btn small">+ hinzufügen</button>`;
+  const inp = addrow.querySelector('input');
+  const add = ()=>{
+    if(!inp.value.trim()) return;
+    L.own.push({t:inp.value.trim(), done:false});
+    save(false); renderLit(m, body);
+  };
+  addrow.querySelector('button').onclick = add;
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter') add(); });
+  body.appendChild(addrow);
 }
 
 /* ── Tab: Themen ── */
@@ -500,7 +642,7 @@ async function renderNotes(m, body){
         text = area.value;
         clearTimeout(t);
         t = setTimeout(async ()=>{
-          state.notes[m.id] = text; save(false);
+          state.notes[m.id] = text; notesCache[m.id] = text; save(false);
           if(dirHandle){ await fsWriteNote(m.id, text); body.querySelector('#n-state').textContent = '✓ gespeichert '+new Date().toLocaleTimeString('de-DE')+' → '+m.id+'/notizen.md'; }
           else body.querySelector('#n-state').textContent = '✓ gespeichert (Browser)';
         }, 800);
@@ -619,20 +761,24 @@ function renderCards(m, body){
   body.innerHTML = `
     <div class="card-form">
       <textarea id="fc-q" placeholder="Frage (z. B. aus den Kontrollfragen / MC-Vorbereitung)…"></textarea>
-      <textarea id="fc-a" placeholder="Antwort…"></textarea>
-      <div style="display:flex;gap:8px">
+      <textarea id="fc-a" placeholder="Richtige Antwort…"></textarea>
+      <textarea id="fc-c" placeholder="Optional für MC-Quiz: falsche Antworten, eine pro Zeile…" style="min-height:38px"></textarea>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn primary small" id="fc-add">+ Karte anlegen</button>
         ${due?`<button class="btn small" id="fc-learn">▶ ${due} fällige Karte(n) lernen</button>`:''}
-        <span style="font-size:.7rem;color:var(--mut);align-self:center">Leitner: gewusst → nächste Box (1/3/7/14/30 Tage), nicht gewusst → zurück zu Box 1</span>
+        <button class="btn small" id="fc-import" title="JSON oder CSV (frage;antwort;falsch1;falsch2…)">⬆ Import</button>
+        ${cards.length?`<button class="btn small" id="fc-export">⬇ Export (JSON)</button>`:''}
+        <input type="file" id="fc-file" accept=".json,.csv,.txt,text/csv,application/json" style="display:none"/>
       </div>
+      <span style="font-size:.7rem;color:var(--mut)">Leitner: gewusst → nächste Box (1/3/7/14/30 Tage), nicht gewusst → zurück zu Box 1. Mit Falschantworten wird die Karte im Lern-Modus als Multiple Choice abgefragt — wie in der echten Prüfung.</span>
     </div>
     <div class="cardlist">${cards.length?'':'<div class="placeholder">Noch keine Lernkarten für dieses Modul.</div>'}</div>`;
   const list = body.querySelector('.cardlist');
   cards.forEach(c=>{
     const row = document.createElement('div');
     row.className = 'fcrow';
-    row.innerHTML = `<span class="box">Box ${c.box}</span><span class="q" title="${esc(c.q)}">${esc(c.q)}</span><span class="due">fällig ${new Date(c.due).toLocaleDateString('de-DE')}</span><button class="btn small danger">🗑</button>`;
-    row.querySelector('button').onclick = ()=>{
+    row.innerHTML = `<span class="box">Box ${c.box}</span>${c.choices&&c.choices.length?'<span class="box" title="Multiple Choice">MC</span>':''}<span class="q" title="${esc(c.q)}">${esc(c.q)}</span><span class="due">fällig ${fmtDate(c.due)}</span><button class="btn small danger">🗑</button>`;
+    row.querySelector('.danger').onclick = ()=>{
       state.cards = state.cards.filter(x=>x.id!==c.id);
       save(false); renderCards(m, body);
     };
@@ -641,12 +787,54 @@ function renderCards(m, body){
   body.querySelector('#fc-add').onclick = ()=>{
     const q = body.querySelector('#fc-q').value.trim();
     const a = body.querySelector('#fc-a').value.trim();
+    const choices = body.querySelector('#fc-c').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
     if(!q || !a){ toast('Frage und Antwort ausfüllen.'); return; }
-    state.cards.push({id:uid(), mod:m.id, q, a, box:1, due:today()});
+    state.cards.push({id:uid(), mod:m.id, q, a, choices, box:1, due:today()});
     save(false); renderCards(m, body);
   };
   const lb = body.querySelector('#fc-learn');
   if(lb) lb.onclick = ()=>startLearning(m.id);
+  const ex = body.querySelector('#fc-export');
+  if(ex) ex.onclick = ()=>{
+    const data = cards.map(c=>({q:c.q, a:c.a, choices:c.choices||[]}));
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `lernkarten_${m.id}_${today()}.json`;
+    a.click(); URL.revokeObjectURL(a.href);
+  };
+  body.querySelector('#fc-import').onclick = ()=>body.querySelector('#fc-file').click();
+  body.querySelector('#fc-file').addEventListener('change', e=>{
+    const f = e.target.files[0];
+    if(!f) return;
+    f.text().then(txt=>{
+      try{
+        const parsed = parseCards(txt);
+        if(!parsed.length) throw new Error('keine Karten erkannt');
+        parsed.forEach(c=>state.cards.push({id:uid(), mod:m.id, q:c.q, a:c.a, choices:c.choices, box:1, due:today()}));
+        save(false); renderCards(m, body);
+        toast(parsed.length+' Karte(n) importiert. ✓');
+      }catch(err){ toast('Import fehlgeschlagen: '+err.message); }
+      e.target.value = '';
+    });
+  });
+}
+/* JSON ([{q,a,choices}] / [{frage,antwort,falsch}]) oder CSV (frage;antwort;falsch1;falsch2…) */
+function parseCards(txt){
+  txt = txt.replace(/^﻿/,'').trim();
+  if(txt.startsWith('[') || txt.startsWith('{')){
+    const data = JSON.parse(txt);
+    const list = Array.isArray(data) ? data : (data.cards||[]);
+    return list.map(c=>({
+      q:String(c.q??c.frage??'').trim(),
+      a:String(c.a??c.antwort??'').trim(),
+      choices:(c.choices??c.falsch??[]).map(x=>String(x).trim()).filter(Boolean)
+    })).filter(c=>c.q && c.a);
+  }
+  return txt.split(/\r?\n/)
+    .map(l=>l.split(';').map(x=>x.trim()))
+    .filter(p=>p.length>=2 && p[0] && p[1] && !/^frage$/i.test(p[0]))
+    .map(p=>({q:p[0], a:p[1], choices:p.slice(2).filter(Boolean)}));
 }
 
 /* ── Lern-Modus ── */
@@ -660,6 +848,7 @@ function startLearning(mid){
   overlay.classList.add('open');
   const draw = ()=>{
     if(i>=queue.length){
+      queue.forEach(q=>{ delete q._opts; delete q._picked; });
       document.getElementById('modal').innerHTML = `
         <div class="mhead"><h3>Fertig für heute 🎉</h3><button class="x">✕</button></div>
         <div class="tabbody"><div class="placeholder">${queue.length} Karte(n) gelernt. Die nächsten Wiederholungen stehen im Dashboard.</div></div>`;
@@ -668,40 +857,170 @@ function startLearning(mid){
       return;
     }
     const c = queue[i];
+    const isMC = c.choices && c.choices.length;
+    if(isMC && !c._opts) c._opts = [c.a, ...c.choices].sort(()=>Math.random()-.5);
+    const grade = ok=>{
+      if(ok){ c.box = Math.min(5, c.box+1); c.due = addDays(today(), LEITNER[c.box]); }
+      else { c.box = 1; c.due = addDays(today(), 1); }
+    };
     document.getElementById('modal').innerHTML = `
       <div class="mhead"><h3>Lernen · ${esc(c.mod)} (${i+1}/${queue.length})</h3><button class="x">✕</button></div>
       <div class="tabbody">
         <div class="learncard">
-          <div class="lmeta">Box ${c.box} · ${esc(MODULES.find(m=>m.id===c.mod)?.name||'')}</div>
+          <div class="lmeta">Box ${c.box} · ${esc(MODULES.find(m=>m.id===c.mod)?.name||'')}${isMC?' · Multiple Choice':''}</div>
           <div class="lq">${esc(c.q)}</div>
-          ${revealed?`<div class="la">${esc(c.a)}</div>`:''}
+          ${isMC
+            ? `<div class="mcopts">${c._opts.map((o,oi)=>{
+                let cls = '';
+                if(revealed) cls = o===c.a ? ' right' : (oi===c._picked ? ' wrong' : '');
+                return `<button class="mcopt${cls}" data-oi="${oi}" ${revealed?'disabled':''}>${esc(o)}</button>`;
+              }).join('')}</div>`
+            : (revealed?`<div class="la">${esc(c.a)}</div>`:'')}
         </div>
         <div class="learnbtns">
-          ${revealed
-            ? `<button class="btn small danger" id="l-no">✗ Nicht gewusst</button><button class="btn primary small" id="l-yes">✓ Gewusst</button>`
-            : `<button class="btn primary" id="l-show">Antwort zeigen</button>`}
+          ${isMC
+            ? (revealed?`<button class="btn primary" id="l-next">Weiter →</button>`:'')
+            : (revealed
+                ? `<button class="btn small danger" id="l-no">✗ Nicht gewusst</button><button class="btn primary small" id="l-yes">✓ Gewusst</button>`
+                : `<button class="btn primary" id="l-show">Antwort zeigen</button>`)}
         </div>
       </div>`;
-    document.querySelector('#modal .x').onclick = ()=>{ save(false); closeModal(); };
+    document.querySelector('#modal .x').onclick = ()=>{
+      queue.forEach(q=>{ delete q._opts; delete q._picked; });
+      save(false); closeModal();
+    };
+    if(isMC && !revealed){
+      document.querySelectorAll('.mcopt').forEach(b=>b.onclick = ()=>{
+        c._picked = Number(b.dataset.oi);
+        grade(c._opts[c._picked]===c.a);
+        revealed = true; draw();
+      });
+    }
+    const next = document.getElementById('l-next');
+    if(next) next.onclick = ()=>{ delete c._opts; delete c._picked; i++; revealed = false; draw(); };
     const show = document.getElementById('l-show');
     if(show) show.onclick = ()=>{ revealed = true; draw(); };
     const yes = document.getElementById('l-yes');
-    if(yes) yes.onclick = ()=>{
-      c.box = Math.min(5, c.box+1);
-      c.due = addDays(today(), LEITNER[c.box]);
-      i++; revealed = false; draw();
-    };
+    if(yes) yes.onclick = ()=>{ grade(true); i++; revealed = false; draw(); };
     const no = document.getElementById('l-no');
-    if(no) no.onclick = ()=>{
-      c.box = 1; c.due = addDays(today(), 1);
-      i++; revealed = false; draw();
-    };
+    if(no) no.onclick = ()=>{ grade(false); i++; revealed = false; draw(); };
   };
   draw();
 }
 function addDays(iso, d){
   const dt = new Date(iso); dt.setDate(dt.getDate()+d);
   return dt.toISOString().slice(0,10);
+}
+
+/* ════════════════ PeerGroup ════════════════ */
+let peerTab = 'kontakte';
+function openPeer(tab){
+  modalMod = null;
+  if(tab) peerTab = tab;
+  overlay.classList.add('open');
+  renderPeer();
+}
+function renderPeer(){
+  const P = state.peer;
+  const tabs = [['kontakte','Kontakte ('+P.contacts.length+')'],['termine','Termine ('+P.meetings.length+')'],['aufgaben','Aufgaben ('+P.tasks.filter(t=>!t.done).length+' offen)']];
+  document.getElementById('modal').innerHTML = `
+    <div class="mhead"><span class="chip" style="margin-top:4px">👥</span><h3>PeerGroup — Gruppenarbeiten zählen 40 % jeder Fachmodul-Note</h3><button class="x">✕</button></div>
+    <div class="tabs">${tabs.map(t=>`<button class="tab ${t[0]===peerTab?'active':''}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</div>
+    <div class="tabbody" id="peerbody"></div>`;
+  document.querySelector('#modal .x').onclick = closeModal;
+  document.querySelectorAll('#modal .tab').forEach(b=>b.onclick = ()=>{ peerTab = b.dataset.tab; renderPeer(); });
+  const body = document.getElementById('peerbody');
+
+  if(peerTab==='kontakte'){
+    body.innerHTML = P.contacts.length?'':'<div class="placeholder">Noch keine Kontakte — kommen bei der PeerGroup-Einteilung in VM1.</div>';
+    P.contacts.forEach((c,i)=>{
+      const row = document.createElement('div');
+      row.className = 'file';
+      row.innerHTML = `<span>👤</span><span class="fn"><b>${esc(c.name)}</b>${c.mail?' · <a href="mailto:'+esc(c.mail)+'" style="color:var(--blue)">'+esc(c.mail)+'</a>':''}${c.tel?' · '+esc(c.tel):''}${c.note?' — <span style="color:var(--mut)">'+esc(c.note)+'</span>':''}</span><button class="btn small danger">🗑</button>`;
+      row.querySelector('.danger').onclick = ()=>{ P.contacts.splice(i,1); save(false); renderPeer(); };
+      body.appendChild(row);
+    });
+    const form = document.createElement('div');
+    form.className = 'card-form';
+    form.innerHTML = `
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <input id="pc-name" placeholder="Name *" style="flex:2;min-width:120px;padding:6px 9px;font-size:.76rem"/>
+        <input id="pc-mail" placeholder="E-Mail" style="flex:2;min-width:120px;padding:6px 9px;font-size:.76rem"/>
+        <input id="pc-tel" placeholder="Telefon/Teams" style="flex:1;min-width:90px;padding:6px 9px;font-size:.76rem"/>
+        <input id="pc-note" placeholder="Notiz" style="flex:2;min-width:120px;padding:6px 9px;font-size:.76rem"/>
+        <button class="btn small primary" id="pc-add">+ Kontakt</button>
+      </div>`;
+    form.querySelector('#pc-add').onclick = ()=>{
+      const name = form.querySelector('#pc-name').value.trim();
+      if(!name){ toast('Name fehlt.'); return; }
+      P.contacts.push({name, mail:form.querySelector('#pc-mail').value.trim(), tel:form.querySelector('#pc-tel').value.trim(), note:form.querySelector('#pc-note').value.trim()});
+      save(false); renderPeer();
+    };
+    body.appendChild(form);
+  }
+
+  if(peerTab==='termine'){
+    const sorted = P.meetings.map((mt,i)=>({mt,i})).sort((a,b)=>(a.mt.date||'').localeCompare(b.mt.date||''));
+    body.innerHTML = sorted.length?'':'<div class="placeholder">Noch keine Gruppentermine.</div>';
+    sorted.forEach(({mt,i})=>{
+      const past = mt.date < today();
+      const row = document.createElement('div');
+      row.className = 'file';
+      if(past) row.style.opacity = .55;
+      row.innerHTML = `<span>📆</span><span class="fn"><b>${fmtDate(mt.date)}${mt.time?' '+esc(mt.time):''}</b> — ${esc(mt.topic||'Gruppentermin')}${mt.mod?' <span class="box" style="font-size:.62rem">'+esc(mt.mod)+'</span>':''}</span><button class="btn small danger">🗑</button>`;
+      row.querySelector('.danger').onclick = ()=>{ P.meetings.splice(i,1); save(false); renderPeer(); };
+      body.appendChild(row);
+    });
+    const form = document.createElement('div');
+    form.className = 'card-form';
+    form.innerHTML = `
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <input id="pm-date" type="date" style="padding:6px 9px;font-size:.76rem"/>
+        <input id="pm-time" type="time" style="padding:6px 9px;font-size:.76rem"/>
+        <input id="pm-topic" placeholder="Thema (z. B. Seminararbeit FM1)" style="flex:2;min-width:140px;padding:6px 9px;font-size:.76rem"/>
+        <select id="pm-mod" style="padding:6px 9px;font-size:.76rem"><option value="">Modul –</option>${MODULES.filter(m=>m.phase==='fach').map(m=>`<option>${m.id}</option>`).join('')}</select>
+        <button class="btn small primary" id="pm-add">+ Termin</button>
+      </div>
+      <span style="font-size:.68rem;color:var(--mut)">Termine landen auch im 📅 ICS-Export und im Wochenplaner.</span>`;
+    form.querySelector('#pm-add').onclick = ()=>{
+      const date = form.querySelector('#pm-date').value;
+      if(!date){ toast('Datum fehlt.'); return; }
+      P.meetings.push({date, time:form.querySelector('#pm-time').value, topic:form.querySelector('#pm-topic').value.trim(), mod:form.querySelector('#pm-mod').value});
+      save(false); renderPeer();
+    };
+    body.appendChild(form);
+  }
+
+  if(peerTab==='aufgaben'){
+    const wrap = document.createElement('div');
+    wrap.className = 'ptodos';
+    if(!P.tasks.length) body.innerHTML = '<div class="placeholder">Noch keine Gruppenaufgaben.</div>';
+    P.tasks.forEach((t,i)=>{
+      const lab = document.createElement('label');
+      lab.className = t.done?'c':'';
+      lab.innerHTML = `<input type="checkbox" ${t.done?'checked':''}/><span>${esc(t.t)}${t.who?' <b>→ '+esc(t.who)+'</b>':''}${t.mod?' <span class="box" style="font-size:.62rem">'+esc(t.mod)+'</span>':''}</span><button class="del">✕</button>`;
+      lab.querySelector('input').onchange = e=>{ t.done = e.target.checked; save(false); renderPeer(); };
+      lab.querySelector('.del').onclick = e=>{ e.preventDefault(); P.tasks.splice(i,1); save(false); renderPeer(); };
+      wrap.appendChild(lab);
+    });
+    body.appendChild(wrap);
+    const form = document.createElement('div');
+    form.className = 'paddrow';
+    form.innerHTML = `
+      <input id="pt-t" placeholder="Aufgabe …" style="flex:3"/>
+      <input id="pt-who" placeholder="Wer?" style="flex:1;min-width:70px;padding:6px 9px;font-size:.76rem"/>
+      <select id="pt-mod" style="padding:6px 9px;font-size:.76rem"><option value="">Modul –</option>${MODULES.filter(m=>m.phase==='fach').map(m=>`<option>${m.id}</option>`).join('')}</select>
+      <button class="btn small primary">+ </button>`;
+    const add = ()=>{
+      const t = form.querySelector('#pt-t').value.trim();
+      if(!t) return;
+      P.tasks.push({t, who:form.querySelector('#pt-who').value.trim(), mod:form.querySelector('#pt-mod').value, done:false});
+      save(false); renderPeer();
+    };
+    form.querySelector('button').onclick = add;
+    form.querySelector('#pt-t').addEventListener('keydown', e=>{ if(e.key==='Enter') add(); });
+    body.appendChild(form);
+  }
 }
 
 /* ════════════════ ICS-Export ════════════════ */
@@ -734,6 +1053,18 @@ function icsExport(){
         n++;
       }
     });
+  });
+  (state.peer.meetings||[]).forEach((mt,i)=>{
+    if(!mt.date) return;
+    if(mt.time){
+      const dt = mt.date.replace(/-/g,'')+'T'+mt.time.replace(':','')+'00';
+      lines.push('BEGIN:VEVENT',`UID:mba-pg-${i}@studium`,`DTSTAMP:${stamp}`,`DTSTART:${dt}`,
+        `SUMMARY:👥 PeerGroup${mt.mod?' ('+mt.mod+')':''}: ${icsEsc(mt.topic||'Gruppentermin')}`,'END:VEVENT');
+    } else {
+      lines.push('BEGIN:VEVENT',`UID:mba-pg-${i}@studium`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${mt.date.replace(/-/g,'')}`,
+        `SUMMARY:👥 PeerGroup${mt.mod?' ('+mt.mod+')':''}: ${icsEsc(mt.topic||'Gruppentermin')}`,'END:VEVENT');
+    }
+    n++;
   });
   lines.push('END:VCALENDAR');
   if(!n){ toast('Keine Termine: Studienstart, Prüfungstermine oder Deadlines setzen.'); return; }
@@ -774,6 +1105,7 @@ document.getElementById('file-import').addEventListener('change', e=>{
 });
 document.getElementById('btn-ics').addEventListener('click', icsExport);
 document.getElementById('btn-folder').addEventListener('click', connectFolder);
+document.getElementById('btn-peer').addEventListener('click', ()=>openPeer());
 document.getElementById('learnbox-btn').addEventListener('click', ()=>startLearning(null));
 document.getElementById('start').addEventListener('change', e=>{ state.start = e.target.value; save(); });
 document.getElementById('search').addEventListener('input', e=>{ searchTerm = e.target.value.trim(); render(); });

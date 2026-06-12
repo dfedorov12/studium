@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/style.css?v=3"/>
+<link rel="stylesheet" href="css/style.css?v=4"/>
 </head>
 <body>
 <div class="wrap">
@@ -22,6 +22,7 @@
   </div>
   <div class="spacer"></div>
   <button class="btn" id="btn-theme" title="Hell/Dunkel">🌙</button>
+  <button class="btn" id="btn-peer" title="Kontakte, Gruppentermine & Aufgaben">👥 PeerGroup</button>
   <button class="btn" id="btn-ics" title="Meilensteine, Prüfungstermine & Deadlines als Kalender">📅 ICS</button>
   <button class="btn" id="btn-import">⬆️ Import</button>
   <button class="btn primary" id="btn-export">⬇️ Backup</button>
@@ -58,6 +59,12 @@
   <button class="btn primary small" id="learnbox-btn">▶ Jetzt lernen</button>
 </div>
 
+<div class="section">
+  <h2>Diese Woche</h2>
+  <div class="desc">Automatisch aus Meilensteinen, laufenden Modulen, fälligen Karten, Prüfungen, Abgaben und PeerGroup-Terminen (nächste 14 Tage). Klick öffnet das Passende.</div>
+  <div class="miles" id="week"></div>
+</div>
+
 <div id="sections"></div>
 
 <div class="section">
@@ -76,7 +83,7 @@
 <div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
 <div class="toast" id="toast"></div>
 
-<script src="js/data.js?v=3"></script>
-<script src="js/app.js?v=3"></script>
+<script src="js/data.js?v=4"></script>
+<script src="js/app.js?v=4"></script>
 </body>
 </html>

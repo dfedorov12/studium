@@ -11,11 +11,14 @@ Persönliches Studien-Cockpit für den **MBA Informationssicherheit und IT-Risik
 - **Notizen:** Markdown-Editor mit Vorschau pro Modul
 - **Material:** Skripte/PDFs pro Modul ablegen & öffnen (Drag&Drop), gespeichert im lokalen Studienordner
 - **Projekte:** Modulprojektarbeiten & Vertiefungsprojekt als Workflows (Idee → … → Bewertet) mit To-dos und Deadlines — Vertiefungsprojekt mit den Bewertungskriterien aus dem Handbuch vorbefüllt
-- **Lernkarten:** eigener Fragenpool pro Modul mit Leitner-Spaced-Repetition (1/3/7/14/30 Tage), „heute fällig“-Widget
+- **Lernkarten:** eigener Fragenpool pro Modul mit Leitner-Spaced-Repetition (1/3/7/14/30 Tage), „heute fällig“-Widget, **MC-Quiz-Modus** (Falschantworten → Abfrage wie in der echten Prüfung) und **Import/Export** (JSON oder CSV `frage;antwort;falsch1;falsch2…` — z. B. KI-generierte Fragenpools einspielen)
+- **Literatur:** Empfehlungen aus dem Handbuch pro Fachmodul vorbefüllt („gelesen“-Checkliste) + eigene Quellen
+- **Wochenplaner „Diese Woche“:** automatisch aus Meilensteinen, laufenden Modulen, fälligen Karten, Prüfungen, Abgaben und PeerGroup-Terminen (14-Tage-Blick)
+- **PeerGroup-Bereich:** Kontakte, Gruppentermine (fließen in ICS + Wochenplaner) und Gruppenaufgaben — Gruppenarbeiten zählen 40 % jeder Fachmodul-Note
 - **Meilensteine M1–M24** mit Zielterminen ab Studienstart + „Bin ich im Plan?“-Indikator
-- **📅 ICS-Export:** Meilensteine, Prüfungstermine und Projekt-Deadlines für Outlook
+- **📅 ICS-Export:** Meilensteine, Prüfungstermine, Projekt-Deadlines und PeerGroup-Termine für Outlook
 - **PWA:** installierbar, offline nutzbar · **Dark Mode**
-- **Suche** über Module und Themen
+- **Suche** über Module, Themen, Literatur und **Notizen-Volltext** (inkl. `notizen.md` aus dem Studienordner)
 
 ## Datenhaltung — lokaler Studienordner
 
