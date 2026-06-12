@@ -1,24 +1,40 @@
 # 🎓 MBA Studium-Tracker
 
-Persönlicher Fortschritts-Tracker für den **MBA Informationssicherheit und IT-Risikomanagement – Professional** (Hochschule Burgenland / E-Learning Group / WBS Akademie).
+Persönliches Studien-Cockpit für den **MBA Informationssicherheit und IT-Risikomanagement – Professional** (Hochschule Burgenland / E-Learning Group / WBS Akademie).
 
 **Live:** https://dfedorov12.github.io/studium/
 
 ## Funktionen
 
-- Alle Module aus der Modulbeschreibung 01/2025 (Basisstudium, Fachmodule FM1–FM6, Vertiefungsprojekt, VM2, Masterarbeit) mit ECTS, Prüfungsformaten und Voraussetzungen
-- Status je Modul (offen / laufend / bestanden), Note, Abschlussmonat, Notizen, LV-Checkboxen
-- 🔒-Hinweis, solange Voraussetzungs-Module nicht bestanden sind
-- ECTS-Fortschrittsbalken + ECTS-gewichteter Notenschnitt
-- Wahlmodul-Auswahl (BWM1/BWM2)
-- Meilenstein-Checkliste mit Zielterminen relativ zum Studienstart
-- **Backup/Restore als JSON-Datei** — Stand exportieren und z. B. im Projektordner ablegen
+- **Module & ECTS:** alle Module aus der Modulbeschreibung 01/2025 mit Prüfungsformaten, Voraussetzungen (🔒-Hinweis) und Status/Note/Abschlussmonat
+- **Themenbaum:** alle Lehrinhalte pro LV als abhakbare Themen (○ offen → ◐ gelernt → ● sitzt) mit Fortschrittsbalken je Modul
+- **Notizen:** Markdown-Editor mit Vorschau pro Modul
+- **Material:** Skripte/PDFs pro Modul ablegen & öffnen (Drag&Drop), gespeichert im lokalen Studienordner
+- **Projekte:** Modulprojektarbeiten & Vertiefungsprojekt als Workflows (Idee → … → Bewertet) mit To-dos und Deadlines — Vertiefungsprojekt mit den Bewertungskriterien aus dem Handbuch vorbefüllt
+- **Lernkarten:** eigener Fragenpool pro Modul mit Leitner-Spaced-Repetition (1/3/7/14/30 Tage), „heute fällig“-Widget
+- **Meilensteine M1–M24** mit Zielterminen ab Studienstart + „Bin ich im Plan?“-Indikator
+- **📅 ICS-Export:** Meilensteine, Prüfungstermine und Projekt-Deadlines für Outlook
+- **PWA:** installierbar, offline nutzbar · **Dark Mode**
+- **Suche** über Module und Themen
 
-## Datenschutz
+## Datenhaltung — lokaler Studienordner
 
-Alle persönlichen Daten (Status, Noten, Notizen) liegen **ausschließlich im localStorage des Browsers** — nichts davon wird ins Repo oder an einen Server übertragen. Die Seite selbst enthält nur die öffentlich dokumentierte Modulstruktur.
+Über **„📁 Ordner verbinden“** (File System Access API, Edge/Chrome) verbindet sich die Seite mit einem lokalen Ordner. Dann gilt:
 
-Backups regelmäßig über den Button **„Backup (JSON)“** ziehen (Empfehlung: in den lokalen Projektordner legen). Wiederherstellen über **„Import“**.
+```
+studienordner/
+├── fortschritt.json     ← Autosave des kompletten Stands
+├── BPM1/
+│   ├── notizen.md       ← Markdown-Notizen (auch extern editierbar)
+│   └── skript.pdf       ← Materialien (Drag&Drop in den Material-Tab)
+└── FM2/ …
+```
+
+💡 Liegt der Ordner in OneDrive, synchronisiert alles automatisch auf andere Geräte.
+
+Ohne verbundenen Ordner läuft alles im localStorage des Browsers (mit JSON-Backup/-Import als Sicherung). **Es wird nie etwas hochgeladen** — die Site ist rein statisch.
+
+⚠️ WBS-Skripte sind urheberrechtlich geschützt: nur lokal ablegen, nie ins Repo committen.
 
 ## Studienplan
 

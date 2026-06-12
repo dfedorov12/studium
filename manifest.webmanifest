@@ -1,0 +1,14 @@
+{
+  "name": "MBA Studium-Tracker",
+  "short_name": "MBA Studium",
+  "description": "Fortschritts-Tracker für den MBA Informationssicherheit und IT-Risikomanagement",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#f6f7f9",
+  "theme_color": "#1a56db",
+  "lang": "de",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

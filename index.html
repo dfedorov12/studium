@@ -3,93 +3,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="theme-color" content="#1a56db"/>
 <title>MBA Studium · Tracker</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>"/>
+<link rel="icon" href="icon.svg" type="image/svg+xml"/>
+<link rel="manifest" href="manifest.webmanifest"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<style>
-:root{
-  --blue:#1a56db; --blue-soft:#eaf0fe; --ink:#111827; --mut:#6b7280;
-  --line:#e5e7eb; --bg:#f6f7f9; --card:#ffffff;
-  --ok:#047857; --ok-soft:#ecfdf5; --warn:#a16207; --warn-soft:#fefce8;
-  --run:#1a56db; --run-soft:#eaf0fe;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
-.wrap{max-width:1080px;margin:0 auto;padding:24px 18px 80px}
-
-header.top{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:18px}
-.logo{width:44px;height:44px;border-radius:11px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none}
-.top h1{font-size:1.15rem;font-weight:800;letter-spacing:-.01em}
-.top .sub{color:var(--mut);font-size:.78rem}
-.top .spacer{flex:1}
-.btn{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:7px 12px;font:inherit;font-size:.78rem;font-weight:600;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.btn:hover{border-color:var(--blue);color:var(--blue)}
-.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
-.btn.primary:hover{filter:brightness(1.08);color:#fff}
-
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
-.stat .k{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}
-.stat .v{font-size:1.35rem;font-weight:800;margin-top:2px}
-.stat .v small{font-size:.75rem;font-weight:600;color:var(--mut)}
-
-.progress{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:22px}
-.progress .row{display:flex;justify-content:space-between;font-size:.78rem;font-weight:600;margin-bottom:7px}
-.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--blue);border-radius:6px;transition:width .3s}
-
-.section{margin-bottom:26px}
-.section>h2{font-size:.95rem;font-weight:800;margin-bottom:3px}
-.section>.desc{color:var(--mut);font-size:.76rem;margin-bottom:11px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
-
-.mod{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 14px;display:flex;flex-direction:column;gap:9px}
-.mod.done{border-color:#a7f3d0;background:#fbfffd}
-.mod.inactive{opacity:.55}
-.mod .head{display:flex;align-items:flex-start;gap:8px}
-.chip{font-size:.64rem;font-weight:700;padding:2px 7px;border-radius:5px;background:var(--blue-soft);color:var(--blue);flex:none;margin-top:2px}
-.mod .name{font-weight:700;font-size:.85rem;flex:1}
-.mod .ects{font-size:.7rem;font-weight:700;color:var(--mut);flex:none;margin-top:2px}
-.mod .meta{font-size:.72rem;color:var(--mut)}
-.mod .meta b{color:var(--ink);font-weight:600}
-.lock{font-size:.7rem;font-weight:600;color:var(--warn);background:var(--warn-soft);border-radius:6px;padding:4px 8px}
-.hint{font-size:.7rem;font-weight:600;color:var(--blue);background:var(--blue-soft);border-radius:6px;padding:4px 8px}
-
-.lvs{display:flex;flex-direction:column;gap:4px}
-.lvs label{display:flex;gap:7px;align-items:flex-start;font-size:.74rem;color:var(--ink);cursor:pointer}
-.lvs input{margin-top:2px;accent-color:var(--blue)}
-.lvs label.c{color:var(--mut);text-decoration:line-through}
-
-.mod .foot{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:auto;padding-top:4px;border-top:1px dashed var(--line)}
-.status{border:none;border-radius:7px;padding:5px 10px;font:inherit;font-size:.72rem;font-weight:700;cursor:pointer}
-.status.s0{background:#f3f4f6;color:#374151}
-.status.s1{background:var(--run-soft);color:var(--run)}
-.status.s2{background:var(--ok-soft);color:var(--ok)}
-.foot select,.foot input[type=month]{border:1px solid var(--line);border-radius:7px;padding:4px 7px;font:inherit;font-size:.72rem;background:#fff;color:var(--ink)}
-.wahl{display:flex;gap:6px;align-items:center;font-size:.7rem;font-weight:600;color:var(--mut);cursor:pointer;margin-left:auto}
-.wahl input{accent-color:var(--blue)}
-.notes{width:100%;border:1px solid var(--line);border-radius:7px;padding:6px 8px;font:inherit;font-size:.74rem;resize:vertical;min-height:30px;color:var(--ink)}
-.notes::placeholder{color:#b6bcc6}
-
-.miles{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.mile{display:flex;gap:10px;align-items:center;padding:9px 14px;border-bottom:1px solid var(--line);font-size:.8rem}
-.mile:last-child{border-bottom:none}
-.mile input{accent-color:var(--blue);flex:none}
-.mile .m{font-size:.66rem;font-weight:700;color:var(--blue);background:var(--blue-soft);border-radius:5px;padding:2px 7px;flex:none;min-width:46px;text-align:center}
-.mile .d{margin-left:auto;font-size:.7rem;color:var(--mut);flex:none}
-.mile.done span.t{color:var(--mut);text-decoration:line-through}
-
-.toolrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:11px}
-.toolrow label{font-size:.76rem;font-weight:600;color:var(--mut)}
-.toolrow input[type=month]{border:1px solid var(--line);border-radius:8px;padding:6px 9px;font:inherit;font-size:.78rem;background:#fff}
-.backup-note{font-size:.72rem;color:var(--mut)}
-.backup-note.warn{color:var(--warn);font-weight:600}
-.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:9px;padding:9px 16px;font-size:.78rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s}
-.toast.show{opacity:1}
-footer{margin-top:30px;color:var(--mut);font-size:.7rem;text-align:center}
-footer a{color:var(--blue);text-decoration:none}
-</style>
+<link rel="stylesheet" href="css/style.css?v=2"/>
 </head>
 <body>
 <div class="wrap">
@@ -101,15 +21,27 @@ footer a{color:var(--blue);text-decoration:none}
     <div class="sub">Professional · Hochschule Burgenland / E-Learning Group / WBS Akademie · Modulbeschreibung 01/2025</div>
   </div>
   <div class="spacer"></div>
+  <button class="btn" id="btn-theme" title="Hell/Dunkel">🌙</button>
+  <button class="btn" id="btn-ics" title="Meilensteine, Prüfungstermine & Deadlines als Kalender">📅 ICS</button>
   <button class="btn" id="btn-import">⬆️ Import</button>
-  <button class="btn primary" id="btn-export">⬇️ Backup (JSON)</button>
+  <button class="btn primary" id="btn-export">⬇️ Backup</button>
   <input type="file" id="file-import" accept=".json,application/json" style="display:none"/>
 </header>
+
+<div class="fsbar" id="fsbar">
+  <span class="dot"></span>
+  <span class="path" id="fsbar-path">Kein Studienordner verbunden.</span>
+  <span class="note" id="fsbar-note"></span>
+  <span style="flex:1"></span>
+  <span class="note" id="backup-note"></span>
+  <button class="btn small" id="btn-folder">📁 Ordner verbinden</button>
+</div>
 
 <div class="toolrow">
   <label for="start">Studienstart:</label>
   <input type="month" id="start"/>
-  <span class="backup-note" id="backup-note"></span>
+  <span class="plan-chip" id="plan-chip" style="display:none"></span>
+  <input class="search" id="search" type="search" placeholder="🔍 Module & Themen durchsuchen …"/>
 </div>
 
 <div class="stats" id="stats"></div>
@@ -119,262 +51,32 @@ footer a{color:var(--blue);text-decoration:none}
   <div class="bar"><i id="p-bar" style="width:0%"></i></div>
 </div>
 
+<div class="learnbox" id="learnbox" style="display:none">
+  <span class="n" id="learnbox-n">0</span>
+  <span>Lernkarten heute fällig</span>
+  <span style="flex:1"></span>
+  <button class="btn primary small" id="learnbox-btn">▶ Jetzt lernen</button>
+</div>
+
 <div id="sections"></div>
 
 <div class="section">
   <h2>Meilensteine</h2>
-  <div class="desc">Monatsangaben relativ zum Studienstart — Zieltermin erscheint, sobald der Start gesetzt ist.</div>
+  <div class="desc">Monatsangaben relativ zum Studienstart — Zieltermin erscheint, sobald der Start gesetzt ist. Export nach Outlook über „📅 ICS“.</div>
   <div class="miles" id="miles"></div>
 </div>
 
 <footer>
-  Daten liegen nur lokal im Browser (localStorage). Regelmäßig <b>Backup (JSON)</b> ziehen und z.&nbsp;B. im Projektordner ablegen. ·
-  <a href="https://github.com/dfedorov12/studium" target="_blank" rel="noopener">GitHub</a>
+  Persönliche Daten bleiben lokal (Studienordner bzw. localStorage) — nichts wird hochgeladen. ·
+  <a href="https://github.com/dfedorov12/studium" target="_blank" rel="noopener">GitHub</a> ·
+  <a href="STUDIENPLAN.md" target="_blank">Studienplan</a>
 </footer>
 </div>
+
+<div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
 <div class="toast" id="toast"></div>
 
-<script>
-'use strict';
-/* ── Stammdaten aus der Modulbeschreibung 01/2025 ─────────────── */
-const PHASES = [
-  {id:'basis', name:'Basisstudium — Online-Module (1. Semester)', desc:'Selbstorganisiertes Lernen, zeitlich flexibel. Jede LV muss einzeln positiv sein; Modulprojektarbeiten zählen 60 % der Modulnote.'},
-  {id:'fach',  name:'Fachstudium — Live-Online-Module (ILV)', desc:'PeerGroups, Fixtermine. Prüfung je Modul: mündliche Abschlussprüfung 60 % + Gruppenarbeit inkl. Seminararbeit 40 %.'},
-  {id:'praxis',name:'Vertiefungsprojekt (im eigenen Unternehmen)', desc:'Läuft parallel zum Fachstudium. Abschluss mit Bericht + Präsentation.'},
-  {id:'abschluss',name:'Abschluss', desc:'VM2 (6-Wochen-Modul mit Vorkonzept) und danach die Masterarbeit.'}
-];
-const MODULES = [
-  {id:'BPM1', phase:'basis', name:'Academic Research Skills', ects:6, exam:'2× Multiple Choice (je 50 %)', deps:[],
-   lvs:['LV1 · Qualitative Forschungsmethodik (MC)','LV2 · Statistische Methoden (MC)'],
-   tip:'Grundlage für alle anderen Module — zuerst abschließen!'},
-  {id:'BPM2', phase:'basis', name:'Unternehmensführung, Strategien & Innovationen', ects:6, exam:'3× MC (40 %) + Projektarbeit (60 %)', deps:[],
-   lvs:['LV1 · Unternehmensführung & Entrepreneurship (MC)','LV2 · Strategisches Management (MC)','LV3 · Digitales Innovationsmanagement (MC)','LV4 · Modulprojektarbeit (schriftlich)']},
-  {id:'BPM3', phase:'basis', name:'Kommunikation und Change', ects:6, exam:'2× MC (je 20 %) + Projektarbeit (60 %)', deps:[],
-   lvs:['LV1 · Leadership & Kommunikation (MC)','LV2 · Kommunikation von Veränderungsprozessen (MC)','LV3 · Modulprojektarbeit (schriftlich)']},
-  {id:'BPM4', phase:'basis', name:'Kompetenzen im Projektmanagement', ects:6, exam:'2× MC (je 20 %) + Projektarbeit (60 %)', deps:[],
-   lvs:['LV1 · Projektdesign (MC)','LV2 · Planung & Steuerung von Projekten (MC)','LV3 · Modulprojektarbeit (schriftlich)']},
-  {id:'BWM1', phase:'basis', name:'Digitalisierung von Geschäftsmodellen', ects:6, exam:'2× MC (je 20 %) + Projektarbeit (60 %)', deps:[], wahl:true,
-   lvs:['LV1 · Entwicklung von Geschäftsmodellen (MC)','LV2 · Digitale Geschäftsmodelle (MC)','LV3 · Modulprojektarbeit (schriftlich)'],
-   tip:'Empfohlenes Wahlmodul — näher am IT-/Security-Profil.'},
-  {id:'BWM2', phase:'basis', name:'Interkulturalität & Digital Leadership', ects:6, exam:'2× MC (je 20 %) + Projektarbeit (60 %)', deps:[], wahl:true,
-   lvs:['LV1 · Interkulturelles Management (MC)','LV2 · Digital Leadership (MC)','LV3 · Modulprojektarbeit (schriftlich)']},
-
-  {id:'VM1', phase:'fach', name:'Vorbereitungsmodul für die Fachmodule', ects:2, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['BPM1'],
-   tip:'Hier passiert die PeerGroup-Einteilung (WBS LearnSpace 3D® / eCampus).'},
-  {id:'FM1', phase:'fach', name:'Einführung Informationssicherheit & angewandte Kryptographie', ects:7, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['VM1']},
-  {id:'FM2', phase:'fach', name:'IT-Sicherheitsmanagement & Grundlagen IT-Forensik', ects:7, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['FM1'],
-   tip:'ISO 27001, BSI 200-1, ISMS-Audit & Zertifizierung.'},
-  {id:'FM3', phase:'fach', name:'IT-Desaster Recovery & Business Continuity Management', ects:7, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['FM1','FM2'],
-   tip:'BSI 200-4, Notfallkonzept, Krisenmanagement.'},
-  {id:'FM4', phase:'fach', name:'IT-Risikomanagement & Awareness', ects:7, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['FM1','FM2'],
-   tip:'ISO 27005 / 31000, BSI 200-3, Cyber-Lagebilder.'},
-  {id:'FM6', phase:'fach', name:'IT-Recht, -Governance & -Compliance', ects:7, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['FM2'],
-   tip:'Flexibel einschiebbar — braucht nur FM2.'},
-  {id:'FM5', phase:'fach', name:'Technologie-Management für Sicherheits- & Risikomanagement', ects:7, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['FM1','FM2','FM3','FM4'],
-   tip:'Als letztes Fachmodul einplanen (braucht FM1–FM4).'},
-
-  {id:'VPS', phase:'praxis', name:'Vertiefungsprojektseminar', ects:3, exam:'immanenter Prüfungscharakter', deps:['BPM1'],
-   tip:'Begleitendes Coaching während des gesamten Vertiefungsprojekts.'},
-  {id:'VP', phase:'praxis', name:'Vertiefungsprojekt', ects:12, exam:'Bericht + Abschlusspräsentation', deps:['BPM1'],
-   tip:'Thema im eigenen Unternehmen — z. B. Compliance-Richtlinien ausrollen, ISMS aufbauen, Risikoanalyse.'},
-
-  {id:'VM2', phase:'abschluss', name:'Seminar zur Masterarbeit', ects:4, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 % + Vorkonzept', deps:['BPM1','VM1'],
-   tip:'Fester 6-Wochen-Ablauf bis zur Vorkonzept-Abgabe.'},
-  {id:'MA', phase:'abschluss', name:'Masterarbeit', ects:null, exam:'lt. Studien-/Prüfungsordnung (inkl. ECTS)', deps:['VM2']}
-];
-const MILESTONES = [
-  {m:'M1–2',  mm:2,  t:'BPM1 abgeschlossen (beide MC-Prüfungen)'},
-  {m:'M6',   mm:6,  t:'Basisstudium komplett (alle Modulprojektarbeiten abgegeben)'},
-  {m:'M7',   mm:7,  t:'VM1 absolviert, PeerGroup gebildet'},
-  {m:'M8',   mm:8,  t:'Vertiefungsprojekt-Thema mit Arbeitgeber abgestimmt'},
-  {m:'M10',  mm:10, t:'FM1 bestanden'},
-  {m:'M12',  mm:12, t:'FM2 bestanden, VPS gestartet'},
-  {m:'M16',  mm:16, t:'FM3 + FM4 bestanden'},
-  {m:'M18',  mm:18, t:'FM5 + FM6 bestanden — alle Fachmodule fertig'},
-  {m:'M20',  mm:20, t:'Vertiefungsprojekt: Bericht + Präsentation abgegeben'},
-  {m:'M21',  mm:21, t:'VM2 inkl. Masterarbeits-Vorkonzept'},
-  {m:'M24',  mm:24, t:'Masterarbeit eingereicht'}
-];
-const STATI = [
-  {k:'offen', label:'○ offen', cls:'s0'},
-  {k:'laufend', label:'● laufend', cls:'s1'},
-  {k:'bestanden', label:'✓ bestanden', cls:'s2'}
-];
-const MONTHS = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
-
-/* ── State ────────────────────────────────────────────────────── */
-const KEY = 'mba-tracker-v1';
-function defaultState(){
-  const s = {v:1, start:'', maEcts:'', lastBackup:'', wahl:{BWM1:true, BWM2:false}, modules:{}, miles:{}};
-  MODULES.forEach(m => s.modules[m.id] = {status:'offen', grade:'', date:'', notes:'', lv:(m.lvs||[]).map(()=>false)});
-  return s;
-}
-let state = load();
-function load(){
-  try{
-    const raw = localStorage.getItem(KEY);
-    if(!raw) return defaultState();
-    const s = Object.assign(defaultState(), JSON.parse(raw));
-    // fehlende Module (nach Updates) auffüllen
-    MODULES.forEach(m=>{ if(!s.modules[m.id]) s.modules[m.id] = defaultState().modules[m.id]; });
-    return s;
-  }catch(e){ return defaultState(); }
-}
-function save(){ localStorage.setItem(KEY, JSON.stringify(state)); render(); }
-
-/* ── Helfer ───────────────────────────────────────────────────── */
-function isActive(m){ return m.wahl ? !!state.wahl[m.id] : true; }
-function ectsOf(m){ return m.id==='MA' ? (parseInt(state.maEcts)||0) : m.ects; }
-function unmetDeps(m){ return (m.deps||[]).filter(d => state.modules[d].status!=='bestanden'); }
-function fmtMonth(off){
-  if(!state.start) return '';
-  const [y,mo] = state.start.split('-').map(Number);
-  const d = new Date(y, mo-1+off-1, 1);
-  return MONTHS[d.getMonth()]+' '+d.getFullYear();
-}
-function esc(t){ return String(t).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-function toast(msg){
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.classList.add('show');
-  clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove('show'), 2200);
-}
-
-/* ── Rendering ────────────────────────────────────────────────── */
-function render(){
-  document.getElementById('start').value = state.start;
-
-  // Statistik
-  const active = MODULES.filter(isActive);
-  const total = active.reduce((a,m)=>a+ectsOf(m),0);
-  const done  = active.filter(m=>state.modules[m.id].status==='bestanden').reduce((a,m)=>a+ectsOf(m),0);
-  const doneCount = active.filter(m=>state.modules[m.id].status==='bestanden').length;
-  const runCount  = active.filter(m=>state.modules[m.id].status==='laufend').length;
-  const graded = active.filter(m=>state.modules[m.id].status==='bestanden' && state.modules[m.id].grade);
-  const avg = graded.length ? (graded.reduce((a,m)=>a+Number(state.modules[m.id].grade)*ectsOf(m),0)/graded.reduce((a,m)=>a+ectsOf(m),0)) : null;
-  document.getElementById('stats').innerHTML = `
-    <div class="stat"><div class="k">ECTS bestanden</div><div class="v">${done} <small>/ ${total}${state.maEcts?'':' + MA'}</small></div></div>
-    <div class="stat"><div class="k">Module bestanden</div><div class="v">${doneCount} <small>/ ${active.length}</small></div></div>
-    <div class="stat"><div class="k">Aktuell laufend</div><div class="v">${runCount}</div></div>
-    <div class="stat"><div class="k">Ø Note (ECTS-gewichtet)</div><div class="v">${avg?avg.toFixed(2):'–'}</div></div>`;
-  const pct = total ? Math.round(done/total*100) : 0;
-  document.getElementById('p-label').textContent = `${done} / ${total} ECTS (${pct} %)`;
-  document.getElementById('p-bar').style.width = pct+'%';
-
-  // Backup-Hinweis
-  const bn = document.getElementById('backup-note');
-  if(!state.lastBackup){ bn.textContent = '· Noch kein Backup gezogen.'; bn.className = 'backup-note warn'; }
-  else{
-    const days = Math.floor((Date.now()-new Date(state.lastBackup).getTime())/86400000);
-    bn.textContent = `· Letztes Backup: ${new Date(state.lastBackup).toLocaleDateString('de-DE')}${days>14?' — länger als 2 Wochen her!':''}`;
-    bn.className = 'backup-note'+(days>14?' warn':'');
-  }
-
-  // Module nach Phase
-  const root = document.getElementById('sections');
-  root.innerHTML = '';
-  PHASES.forEach(ph=>{
-    const mods = MODULES.filter(m=>m.phase===ph.id);
-    const sec = document.createElement('div');
-    sec.className = 'section';
-    sec.innerHTML = `<h2>${esc(ph.name)}</h2><div class="desc">${esc(ph.desc)}</div><div class="grid"></div>`;
-    const grid = sec.querySelector('.grid');
-    mods.forEach(m=>grid.appendChild(card(m)));
-    root.appendChild(sec);
-  });
-
-  // Meilensteine
-  const ml = document.getElementById('miles');
-  ml.innerHTML = '';
-  MILESTONES.forEach((ms,i)=>{
-    const row = document.createElement('div');
-    const checked = !!state.miles[i];
-    row.className = 'mile'+(checked?' done':'');
-    row.innerHTML = `<input type="checkbox" ${checked?'checked':''}/><span class="m">${esc(ms.m)}</span><span class="t">${esc(ms.t)}</span><span class="d">${fmtMonth(ms.mm)}</span>`;
-    row.querySelector('input').addEventListener('change', e=>{ state.miles[i]=e.target.checked; save(); });
-    ml.appendChild(row);
-  });
-}
-
-function card(m){
-  const st = state.modules[m.id];
-  const active = isActive(m);
-  const deps = unmetDeps(m);
-  const el = document.createElement('div');
-  el.className = 'mod'+(st.status==='bestanden'?' done':'')+(active?'':' inactive');
-  const stDef = STATI.find(s=>s.k===st.status);
-  const ectsTxt = m.id==='MA'
-    ? `<input type="number" min="1" max="40" placeholder="ECTS?" value="${esc(state.maEcts)}" style="width:62px;border:1px solid var(--line);border-radius:6px;padding:2px 5px;font:inherit;font-size:.7rem" title="ECTS lt. Prüfungsordnung eintragen"/>`
-    : `${m.ects} ECTS`;
-
-  el.innerHTML = `
-    <div class="head">
-      <span class="chip">${esc(m.id)}</span>
-      <span class="name">${esc(m.name)}</span>
-      <span class="ects">${ectsTxt}</span>
-    </div>
-    <div class="meta"><b>Prüfung:</b> ${esc(m.exam)}${m.deps.length?` · <b>setzt voraus:</b> ${m.deps.join(', ')}`:''}</div>
-    ${m.tip?`<div class="hint">💡 ${esc(m.tip)}</div>`:''}
-    ${deps.length && st.status!=='bestanden' && active?`<div class="lock">🔒 wartet auf: ${deps.join(', ')}</div>`:''}
-    ${m.lvs?`<div class="lvs">${m.lvs.map((lv,i)=>`<label class="${st.lv[i]?'c':''}"><input type="checkbox" data-lv="${i}" ${st.lv[i]?'checked':''}/>${esc(lv)}</label>`).join('')}</div>`:''}
-    <textarea class="notes" placeholder="Notizen (Termine, Thema, Lerngruppe …)">${esc(st.notes)}</textarea>
-    <div class="foot">
-      <button class="status ${stDef.cls}" title="Status wechseln">${stDef.label}</button>
-      <select title="Note (1–5)">
-        <option value="">Note –</option>
-        ${[1,2,3,4,5].map(n=>`<option ${String(n)===st.grade?'selected':''}>${n}</option>`).join('')}
-      </select>
-      <input type="month" value="${esc(st.date)}" title="Abschluss-Monat"/>
-      ${m.wahl?`<label class="wahl"><input type="checkbox" ${active?'checked':''}/>gewählt</label>`:''}
-    </div>`;
-
-  el.querySelector('.status').addEventListener('click', ()=>{
-    const i = STATI.findIndex(s=>s.k===st.status);
-    st.status = STATI[(i+1)%STATI.length].k;
-    save();
-  });
-  el.querySelector('.foot select').addEventListener('change', e=>{ st.grade = e.target.value; save(); });
-  el.querySelector('.foot input[type=month]').addEventListener('change', e=>{ st.date = e.target.value; save(); });
-  el.querySelector('.notes').addEventListener('change', e=>{ st.notes = e.target.value; save(); });
-  el.querySelectorAll('.lvs input').forEach(cb=>cb.addEventListener('change', e=>{
-    st.lv[Number(e.target.dataset.lv)] = e.target.checked; save();
-  }));
-  if(m.wahl) el.querySelector('.wahl input').addEventListener('change', e=>{ state.wahl[m.id]=e.target.checked; save(); });
-  if(m.id==='MA') el.querySelector('.ects input').addEventListener('change', e=>{ state.maEcts = e.target.value; save(); });
-  return el;
-}
-
-/* ── Export / Import ──────────────────────────────────────────── */
-document.getElementById('btn-export').addEventListener('click', ()=>{
-  state.lastBackup = new Date().toISOString();
-  localStorage.setItem(KEY, JSON.stringify(state));
-  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `mba-fortschritt_${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-  render();
-  toast('Backup heruntergeladen — z. B. im Projektordner ablegen.');
-});
-document.getElementById('btn-import').addEventListener('click', ()=>document.getElementById('file-import').click());
-document.getElementById('file-import').addEventListener('change', e=>{
-  const f = e.target.files[0];
-  if(!f) return;
-  f.text().then(txt=>{
-    try{
-      const data = JSON.parse(txt);
-      if(!data.modules) throw new Error('kein Tracker-Backup');
-      state = Object.assign(defaultState(), data);
-      MODULES.forEach(m=>{ if(!state.modules[m.id]) state.modules[m.id] = defaultState().modules[m.id]; });
-      save();
-      toast('Backup importiert. ✓');
-    }catch(err){ toast('Import fehlgeschlagen: '+err.message); }
-    e.target.value = '';
-  });
-});
-document.getElementById('start').addEventListener('change', e=>{ state.start = e.target.value; save(); });
-
-render();
-</script>
+<script src="js/data.js?v=2"></script>
+<script src="js/app.js?v=2"></script>
 </body>
 </html>
