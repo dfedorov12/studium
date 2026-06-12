@@ -6,7 +6,7 @@ const THEME_KEY = 'mba-theme';
 function defaultState(){
   const s = {v:2, savedAt:'', start:'', maEcts:'', lastBackup:'',
     wahl:{BWM1:true, BWM2:false}, modules:{}, miles:{}, topics:{}, notes:{}, projects:{}, cards:[],
-    lit:{}, peer:{contacts:[], meetings:[], tasks:[]}};
+    lit:{}, peer:{contacts:[], meetings:[], tasks:[]}, log:{}, ectsLog:[]};
   MODULES.forEach(m=>{
     s.modules[m.id] = {status:'offen', grade:'', date:'', examDate:'', notes:''};
     s.topics[m.id] = {};
@@ -44,6 +44,8 @@ function migrate(data){
   const s = Object.assign(def, data);
   ['modules','topics','projects','notes','lit'].forEach(k=>{ s[k] = Object.assign({}, def[k], data[k]||{}); });
   s.peer = Object.assign({contacts:[], meetings:[], tasks:[]}, data.peer||{});
+  s.log = data.log || {};
+  s.ectsLog = Array.isArray(data.ectsLog) ? data.ectsLog : [];
   // v1 → v2: LV-Checkboxen entfallen (ersetzt durch Themenbaum); fehlende Modul-Felder auffüllen
   MODULES.forEach(m=>{
     s.modules[m.id] = Object.assign({status:'offen',grade:'',date:'',examDate:'',notes:''}, s.modules[m.id]||{});
@@ -56,8 +58,22 @@ function migrate(data){
   s.v = 2;
   return s;
 }
+/* Aktivität fürs Statistik-Log: t=Thema, c=Karte, p=Projekt-Schritt */
+function logEvent(kind){
+  const d = today();
+  if(!state.log[d]) state.log[d] = {};
+  state.log[d][kind] = (state.log[d][kind]||0)+1;
+}
+/* ECTS-Verlauf: Punkt anhängen, wenn sich der Bestanden-Stand ändert */
+function recordEcts(){
+  const done = MODULES.filter(m=>isActive(m) && state.modules[m.id].status==='bestanden')
+    .reduce((a,m)=>a+ectsOf(m),0);
+  const last = state.ectsLog[state.ectsLog.length-1];
+  if(!last || last.e !== done) state.ectsLog.push({d:today(), e:done});
+}
 let saveTimer = null;
 function save(rerender=true){
+  recordEcts();
   state.savedAt = new Date().toISOString();
   localStorage.setItem(KEY, JSON.stringify(state));
   clearTimeout(saveTimer);
@@ -118,11 +134,13 @@ async function restoreFolder(){
   }catch(e){ /* IndexedDB/Handle nicht verfügbar → ignorieren */ }
   renderFsBar();
 }
+let fileSavedAt = ''; // savedAt der zuletzt von uns gelesenen/geschriebenen Datei
 async function fsLoadOrSeed(){
   try{
     const fh = await dirHandle.getFileHandle('fortschritt.json');
     const txt = await (await fh.getFile()).text();
     const data = JSON.parse(txt);
+    fileSavedAt = data.savedAt || '';
     if(data.modules && (!state.savedAt || (data.savedAt||'') > state.savedAt)){
       state = migrate(data);
       localStorage.setItem(KEY, JSON.stringify(state));
@@ -134,11 +152,52 @@ async function fsLoadOrSeed(){
 async function fsWriteState(){
   if(!dirHandle) return;
   const fh = await dirHandle.getFileHandle('fortschritt.json', {create:true});
+  // Schreibkonflikt-Schutz: hat ein anderes Gerät (z. B. via OneDrive) inzwischen geschrieben?
+  try{
+    const onDisk = JSON.parse(await (await fh.getFile()).text());
+    if(onDisk.savedAt && fileSavedAt && onDisk.savedAt > fileSavedAt && onDisk.savedAt !== state.savedAt){
+      const useDisk = confirm(
+        'Achtung: fortschritt.json wurde zwischenzeitlich von einem anderen Gerät geändert ('
+        + new Date(onDisk.savedAt).toLocaleString('de-DE') + ').\n\n'
+        + 'OK = Stand aus dem Ordner übernehmen (empfohlen)\n'
+        + 'Abbrechen = mit dem Stand dieses Geräts überschreiben');
+      if(useDisk){
+        state = migrate(onDisk);
+        fileSavedAt = onDisk.savedAt;
+        localStorage.setItem(KEY, JSON.stringify(state));
+        render();
+        toast('Stand vom anderen Gerät übernommen.');
+        return;
+      }
+    }
+  }catch(e){ /* Datei leer/neu */ }
   const w = await fh.createWritable();
   await w.write(JSON.stringify(state, null, 2));
   await w.close();
+  fileSavedAt = state.savedAt;
+  await rotateBackups();
   const el = document.getElementById('fsbar-note');
   if(el) el.textContent = 'Autosave: '+new Date().toLocaleTimeString('de-DE')+' → fortschritt.json';
+}
+/* Täglicher Sicherungspunkt in backups/ (beim ersten Speichern des Tages), max. 10 behalten */
+async function rotateBackups(){
+  try{
+    const bdir = await dirHandle.getDirectoryHandle('backups', {create:true});
+    const name = 'fortschritt-'+today()+'.json';
+    let exists = true;
+    try{ await bdir.getFileHandle(name); }catch(e){ exists = false; }
+    if(!exists){
+      const fh = await bdir.getFileHandle(name, {create:true});
+      const w = await fh.createWritable();
+      await w.write(JSON.stringify(state, null, 2));
+      await w.close();
+    }
+    const names = [];
+    for await (const [n,h] of bdir.entries())
+      if(h.kind==='file' && /^fortschritt-\d{4}-\d{2}-\d{2}\.json$/.test(n)) names.push(n);
+    names.sort();
+    while(names.length > 10) await bdir.removeEntry(names.shift());
+  }catch(e){ /* Backups sind best effort */ }
 }
 async function modDir(mid, create=false){
   if(!dirHandle) return null;
@@ -345,6 +404,66 @@ function render(){
   });
 
   renderWeek();
+  renderStats();
+}
+
+/* ── Statistik: Lern-Heatmap + ECTS-Kurve ── */
+function renderStats(){
+  // Heatmap: letzte 26 Wochen, Spalten = Wochen, Zeilen = Mo–So
+  const heat = document.getElementById('heatmap');
+  const now = new Date(); now.setHours(12,0,0,0);
+  const dow = (now.getDay()+6)%7;            // 0 = Montag
+  const end = new Date(now); end.setDate(end.getDate()+(6-dow)); // Sonntag dieser Woche
+  const start = new Date(end); start.setDate(start.getDate()-26*7+1);
+  let cells = '', total = 0, days = 0;
+  for(let w=0; w<26; w++){
+    for(let d=0; d<7; d++){
+      const dt = new Date(start); dt.setDate(start.getDate()+w*7+d);
+      if(dt>now){ cells += '<i style="visibility:hidden"></i>'; continue; }
+      const iso = dt.toISOString().slice(0,10);
+      const e = state.log[iso];
+      const n = e ? Object.values(e).reduce((a,b)=>a+b,0) : 0;
+      if(n){ total += n; days++; }
+      const lv = n===0?0 : n<=2?1 : n<=5?2 : n<=10?3 : 4;
+      cells += `<i class="h${lv}" title="${dt.toLocaleDateString('de-DE')}: ${n} Aktivität${n===1?'':'en'}"></i>`;
+    }
+  }
+  heat.innerHTML = cells;
+  document.getElementById('heat-sum').textContent = total
+    ? `${total} Aktivitäten an ${days} Tagen (26 Wochen) — Themen, Karten, Projektschritte`
+    : 'Noch keine Aktivität erfasst — Themen abhaken, Karten lernen und Projektschritte erledigen füllt die Karte.';
+
+  // ECTS-Kurve: Plan-Linie (linear bis PLAN_MONTHS) vs. Ist (ectsLog)
+  const svg = document.getElementById('ectschart');
+  if(!state.start){ svg.style.display='none'; document.getElementById('ects-hint').textContent='Studienstart setzen → ECTS-Kurve gegen den Plan.'; return; }
+  svg.style.display='';
+  document.getElementById('ects-hint').textContent='';
+  const totalE = MODULES.filter(isActive).reduce((a,m)=>a+ectsOf(m),0);
+  const W=600, H=150, P=26;
+  const x = mon=>P+(W-2*P)*Math.min(mon,PLAN_MONTHS)/PLAN_MONTHS;
+  const y = e=>H-P+ (P*2-H)*Math.min(e,totalE)/totalE;
+  const [sy,sm] = state.start.split('-').map(Number);
+  const startMs = new Date(sy, sm-1, 1).getTime();
+  const monOf = iso=>Math.max(0,(new Date(iso).getTime()-startMs)/(30.44*86400000));
+  // Ist-Stufenlinie
+  let pts = `${x(0)},${y(0)}`, lastE = 0;
+  state.ectsLog.forEach(p=>{
+    const mx = x(monOf(p.d));
+    pts += ` ${mx},${y(lastE)} ${mx},${y(p.e)}`;
+    lastE = p.e;
+  });
+  pts += ` ${x(monOf(today()))},${y(lastE)}`;
+  const gridM = [6,12,18];
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svg.innerHTML = `
+    ${gridM.map(m=>`<line x1="${x(m)}" y1="${y(0)}" x2="${x(m)}" y2="${y(totalE)}" stroke="var(--line)" stroke-dasharray="2 4"/>
+      <text x="${x(m)}" y="${H-7}" font-size="9" fill="var(--mut)" text-anchor="middle">M${m}</text>`).join('')}
+    <line x1="${x(0)}" y1="${y(0)}" x2="${W-P}" y2="${y(0)}" stroke="var(--line)"/>
+    <line x1="${x(0)}" y1="${y(0)}" x2="${x(PLAN_MONTHS)}" y2="${y(totalE)}" stroke="var(--mut)" stroke-dasharray="5 4" stroke-width="1.4"/>
+    <polyline points="${pts}" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linejoin="round"/>
+    <circle cx="${x(monOf(today()))}" cy="${y(lastE)}" r="3.5" fill="var(--blue)"/>
+    <text x="${P}" y="${y(totalE)+4}" font-size="9" fill="var(--mut)">${totalE} ECTS</text>
+    <text x="${W-P}" y="${H-7}" font-size="9" fill="var(--mut)" text-anchor="end">M${PLAN_MONTHS}</text>`;
 }
 
 /* ── Wochenplaner: „Diese Woche dran“ ── */
@@ -602,7 +721,9 @@ function renderTopics(m, body){
       row.className = 'topic t'+v;
       row.innerHTML = `<button class="tdot ${TOPIC_STATI[v].cls}" title="${TOPIC_STATI[v].title} — klicken zum Wechseln">${TOPIC_STATI[v].label}</button><span class="tt">${esc(t)}</span>`;
       row.querySelector('button').onclick = ()=>{
-        state.topics[m.id][key] = ((state.topics[m.id][key]||0)+1)%3;
+        const nv = ((state.topics[m.id][key]||0)+1)%3;
+        state.topics[m.id][key] = nv;
+        if(nv>0) logEvent('t');
         save(false); renderTopics(m, body);
       };
       grp.appendChild(row);
@@ -728,7 +849,9 @@ function renderProjects(m, body){
       }
     };
     el.querySelectorAll('.ptodos input[type=checkbox]').forEach(cb=>cb.onchange = e=>{
-      p.todos[Number(e.target.dataset.i)].done = e.target.checked; save(false); renderProjects(m, body);
+      p.todos[Number(e.target.dataset.i)].done = e.target.checked;
+      if(e.target.checked) logEvent('p');
+      save(false); renderProjects(m, body);
     });
     el.querySelectorAll('.ptodos .del').forEach(b=>b.onclick = e=>{
       e.preventDefault();
@@ -862,6 +985,7 @@ function startLearning(mid){
     const grade = ok=>{
       if(ok){ c.box = Math.min(5, c.box+1); c.due = addDays(today(), LEITNER[c.box]); }
       else { c.box = 1; c.due = addDays(today(), 1); }
+      logEvent('c');
     };
     document.getElementById('modal').innerHTML = `
       <div class="mhead"><h3>Lernen · ${esc(c.mod)} (${i+1}/${queue.length})</h3><button class="x">✕</button></div>

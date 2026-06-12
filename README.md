@@ -11,7 +11,8 @@ Persönliches Studien-Cockpit für den **MBA Informationssicherheit und IT-Risik
 - **Notizen:** Markdown-Editor mit Vorschau pro Modul
 - **Material:** Skripte/PDFs pro Modul ablegen & öffnen (Drag&Drop), gespeichert im lokalen Studienordner
 - **Projekte:** Modulprojektarbeiten & Vertiefungsprojekt als Workflows (Idee → … → Bewertet) mit To-dos und Deadlines — Vertiefungsprojekt mit den Bewertungskriterien aus dem Handbuch vorbefüllt
-- **Lernkarten:** eigener Fragenpool pro Modul mit Leitner-Spaced-Repetition (1/3/7/14/30 Tage), „heute fällig“-Widget, **MC-Quiz-Modus** (Falschantworten → Abfrage wie in der echten Prüfung) und **Import/Export** (JSON oder CSV `frage;antwort;falsch1;falsch2…` — z. B. KI-generierte Fragenpools einspielen)
+- **Lernkarten:** eigener Fragenpool pro Modul mit Leitner-Spaced-Repetition (1/3/7/14/30 Tage), „heute fällig“-Widget, **MC-Quiz-Modus** (Falschantworten → Abfrage wie in der echten Prüfung) und **Import/Export** (JSON oder CSV `frage;antwort;falsch1;falsch2…`) — fertige Prompt-Vorlage zum Generieren aus Skripten: [PROMPT.md](PROMPT.md)
+- **Statistik:** Lern-Heatmap (26 Wochen, Themen/Karten/Projektschritte) + ECTS-Kurve gegen die Plan-Linie
 - **Literatur:** Empfehlungen aus dem Handbuch pro Fachmodul vorbefüllt („gelesen“-Checkliste) + eigene Quellen
 - **Wochenplaner „Diese Woche“:** automatisch aus Meilensteinen, laufenden Modulen, fälligen Karten, Prüfungen, Abgaben und PeerGroup-Terminen (14-Tage-Blick)
 - **PeerGroup-Bereich:** Kontakte, Gruppentermine (fließen in ICS + Wochenplaner) und Gruppenaufgaben — Gruppenarbeiten zählen 40 % jeder Fachmodul-Note
@@ -27,11 +28,15 @@ Persönliches Studien-Cockpit für den **MBA Informationssicherheit und IT-Risik
 ```
 studienordner/
 ├── fortschritt.json     ← Autosave des kompletten Stands
+├── backups/             ← tägliche Sicherungspunkte (automatisch, letzte 10)
+│   └── fortschritt-2026-06-12.json
 ├── BPM1/
 │   ├── notizen.md       ← Markdown-Notizen (auch extern editierbar)
 │   └── skript.pdf       ← Materialien (Drag&Drop in den Material-Tab)
 └── FM2/ …
 ```
+
+Schreibkonflikt-Schutz: Ändert ein anderes Gerät die Datei zwischenzeitlich (OneDrive-Sync), fragt die App nach, statt still zu überschreiben.
 
 💡 Liegt der Ordner in OneDrive, synchronisiert alles automatisch auf andere Geräte.
 

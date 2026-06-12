@@ -178,6 +178,16 @@ html[data-theme=dark] .tbar i.t1{background:#3a548f}
 .learncard .lmeta{font-size:.68rem;color:var(--mut);margin-bottom:10px}
 .learnbtns{display:flex;gap:10px;justify-content:center}
 
+/* Statistik */
+:root{--h1:#c3d4f8;--h2:#8fb0f2;--h3:#4a7ae6;--h4:#1a56db}
+html[data-theme=dark]{--h1:#27406e;--h2:#35589c;--h3:#4a7ae6;--h4:#7da3f5}
+.statcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,11px);grid-auto-columns:11px;gap:3px;overflow-x:auto;padding-bottom:2px}
+.heat i{width:11px;height:11px;border-radius:3px;background:var(--line)}
+.heat i.h1{background:var(--h1)}.heat i.h2{background:var(--h2)}.heat i.h3{background:var(--h3)}.heat i.h4{background:var(--h4)}
+.heat-sum{font-size:.7rem;color:var(--mut)}
+#ectschart{width:100%;height:auto;max-height:170px}
+
 /* MC-Quiz */
 .mcopts{display:flex;flex-direction:column;gap:7px;margin-top:16px;text-align:left}
 .mcopt{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:9px 13px;font-size:.82rem;cursor:pointer;text-align:left;color:var(--ink)}
