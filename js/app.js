@@ -453,7 +453,7 @@ function renderStats(){
     lastE = p.e;
   });
   pts += ` ${x(monOf(today()))},${y(lastE)}`;
-  const gridM = [6,12,18,24];
+  const gridM = [6,12,18];
   svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
   svg.innerHTML = `
     ${gridM.map(m=>`<line x1="${x(m)}" y1="${y(0)}" x2="${x(m)}" y2="${y(totalE)}" stroke="var(--line)" stroke-dasharray="2 4"/>

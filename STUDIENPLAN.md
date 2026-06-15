@@ -11,7 +11,8 @@ Basis: Modulbeschreibung Version 01/2025 (MODULB_1.pdf)
 |---|---|
 | Abschluss | Master of Business Administration (MBA), Masterniveau Level 7 NQR |
 | Umfang | **120 ECTS** (Professional-Format) |
-| Regelstudiendauer | **5 Semester** (≈ 30 Monate) · maximale Studiendauer 10 Semester |
+| Regelstudiendauer | 5 Semester (≈ 30 Monate) · maximale Studiendauer 10 Semester |
+| **Ziel-Pace (Denis)** | **24 Monate** (verdichtet, schneller als Regelstudienzeit) |
 | Format | Live-Online · Online-Module (Selbststudium) + Live-Online-Module (ILV, u. a. WBS LearnSpace 3D® / WBS eCampus) |
 | Sprache | Deutsch |
 | Struktur | Basisstudium (BWL-Teil) → Fachstudium (Security-Teil) → Vertiefungsprojekt → Masterarbeit |
@@ -70,31 +71,29 @@ VM1 + BPM1 ──► VM2 ──► Masterarbeit
 
 ---
 
-## 4. Empfohlener Ablaufplan (5 Semester / ~30 Monate, berufsbegleitend)
+## 4. Ziel-Ablaufplan (24 Monate, verdichtet)
 
-> Entspricht der vertraglichen Regelstudiendauer. Wer schneller will, kann auf ~24 Monate verdichten (vor allem Phase 3+4 überlappen); die Modul-Abhängigkeiten bleiben dabei gleich.
+> Schneller als die Regelstudiendauer (5 Semester / ~30 Monate). Machbar, weil das Basisstudium flexibel ist und FM3/FM4/FM6 nur FM1+FM2 voraussetzen, also parallel laufen können. Die Modul-Abhängigkeiten bleiben gleich; der Puffer bis zur Maximaldauer (10 Semester) bleibt komfortabel. Wer entschleunigen will, streckt einfach Phase 3+4.
 
-### Semester 1 — Monate 1–6: Basisstudium (Online, flexibel)
+### Phase 1 — Monate 1–6: Basisstudium (Online, flexibel)
 1. **Zuerst BPM1 (Academic Research Skills)** — explizit „Grundlage für alle anderen Module“ und Voraussetzung für VM1, VPS, VP, VM2. In Monat 1–2 abschließen.
 2. Danach BPM2 → BPM4 → BPM3 (BPM4-Projektmanagement-Wissen hilft bei allen Modulprojektarbeiten).
 3. Wahlmodul: **BWM1 (Digitalisierung von Geschäftsmodellen)** empfohlen — näher am IT-/Security-Profil als BWM2; BWM2 wählen, wenn Führungs-/Teamthemen wichtiger sind.
 4. Taktung: pro Modul ~4–5 Wochen; MC-Prüfungen direkt nach den LVs, die Modulprojektarbeit (jeweils 60 % der Note!) mit fixem Schreibfenster von 2 Wochen einplanen.
 
-### Semester 2 — Monate 7–12: Einstieg Fachstudium
+### Phase 2 — Monate 7–12: Einstieg Fachstudium
 5. **VM1** (PeerGroup-Einteilung — Termine ab hier fix, Live-Online).
 6. **FM1** (InfoSec-Grundlagen + Kryptographie) → **FM2** (ISMS/ISO 27001 + Forensik).
 7. **VPS starten** und Thema für das Vertiefungsprojekt festlegen. Das VP soll im eigenen Unternehmen laufen — Themen laut Handbuch z. B. *Festlegung und Ausrollung von Compliance-Richtlinien, Aufbau und Betrieb eines Managementsystems, Risikoanalyse, Awareness*. → Naheliegend: das **DIHAG-Richtlinienmanagementsystem / ISMS-Themen bei DIHAG** als Vertiefungsprojekt nutzen — doppelter Nutzen für Job und Studium.
 
-### Semester 3 — Monate 13–18: Fachmodule Mitte
+### Phase 3 — Monate 13–18: Fachmodule fertig + Projekt durchführen
 8. **FM4** (IT-Risikomanagement) und **FM3** (DR/BCM) — beide brauchen nur FM1+FM2.
 9. **FM6** (Recht/Governance/Compliance) — braucht nur FM2, flexibel einschiebbar.
-10. **Vertiefungsprojekt** im Unternehmen umsetzen, laufend dokumentieren (Ausgangslage, Maßnahmen, Umsetzungsschritte — das sind die Bewertungskriterien).
+10. **FM5** (Technologie-Management) als letztes Fachmodul (braucht FM1–FM4).
+11. Parallel: **Vertiefungsprojekt** im Unternehmen umsetzen, laufend dokumentieren (Ausgangslage, Maßnahmen, Umsetzungsschritte — das sind die Bewertungskriterien).
 
-### Semester 4 — Monate 19–24: Fachmodule fertig + Projektabschluss
-11. **FM5** (Technologie-Management) als letztes Fachmodul (braucht FM1–FM4).
+### Phase 4 — Monate 19–24: Abschluss
 12. **VP-Bericht + Abschlusspräsentation** (12 ECTS — größter Einzelbrocken neben der Masterarbeit).
-
-### Semester 5 — Monate 25–30: Masterarbeit
 13. **VM2** (6 Wochen, fester Ablauf: Methoden → Schreibstil → PGA-Präsentation → Coaching → Vorkonzept-Abgabe + Prüfung). Masterarbeitsthema idealerweise als Weiterführung des Vertiefungsprojekts wählen.
 14. **Masterarbeit** schreiben + Abschluss.
 
@@ -102,7 +101,7 @@ VM1 + BPM1 ──► VM2 ──► Masterarbeit
 
 ## 5. Aufwandsplanung
 
-- 120 ECTS × 25 h = **3.000 Std.** nominal → über 5 Semester / ~30 Monate ≈ **22–23 Std./Woche** rechnerisch; berufsbegleitend real weniger (Berufspraxis zählt in den Workload hinein) — plane **12–18 Std./Woche** mit Spitzen bei Projektarbeiten, Prüfungswochen und der Masterarbeit-Phase.
+- 120 ECTS × 25 h = **3.000 Std.** nominal → bei der 24-Monats-Verdichtung ≈ **29 Std./Woche** rechnerisch; berufsbegleitend real weniger (Berufspraxis zählt in den Workload hinein) — plane **18–22 Std./Woche** mit Spitzen bei Projektarbeiten, Prüfungswochen und der Masterarbeit-Phase. (Zum Vergleich: über die volle Regelstudienzeit von 30 Monaten wären es ~12–18 Std./Woche.)
 - **Fixtermine** nur bei Live-Online-Modulen (VM1, FM1–6, VPS, VM2) — Basisstudium komplett flexibel → Basismodule in ruhige Arbeitsphasen legen.
 - Jede Modulnote im Basisstudium hängt zu 60 % an der schriftlichen Projektarbeit → wissenschaftliches Schreiben (Zitation! Citavi/Zotero ab Tag 1 nutzen) ist der größte Hebel für den Notenschnitt.
 - Fachmodule: 60 % mündliche Abschlussprüfung, 40 % Gruppenarbeit → PeerGroup aktiv pflegen, Gruppentermine früh blocken.
@@ -110,16 +109,16 @@ VM1 + BPM1 ──► VM2 ──► Masterarbeit
 ## 6. Meilenstein-Checkliste
 
 - [ ] M2: BPM1 abgeschlossen (beide MC-Prüfungen)
-- [ ] M6: Basisstudium komplett (alle Modulprojektarbeiten abgegeben) — Ende Sem. 1
-- [ ] M8: VM1 + PeerGroup gebildet
-- [ ] M9: Vertiefungsprojekt-Thema mit Arbeitgeber abgestimmt
-- [ ] M11: FM1 bestanden
-- [ ] M13: FM2 bestanden, VPS gestartet
-- [ ] M18: FM3 + FM4 + FM6 bestanden — Ende Sem. 3
-- [ ] M22: FM5 bestanden — alle Fachmodule fertig
-- [ ] M24: Vertiefungsprojekt-Bericht + Präsentation abgegeben — Ende Sem. 4
-- [ ] M28: VM2 inkl. Masterarbeits-Vorkonzept
-- [ ] M30: Masterarbeit eingereicht — Abschluss
+- [ ] M6: Basisstudium komplett (alle Modulprojektarbeiten abgegeben)
+- [ ] M7: VM1 + PeerGroup gebildet
+- [ ] M8: Vertiefungsprojekt-Thema mit Arbeitgeber abgestimmt
+- [ ] M10: FM1 bestanden
+- [ ] M12: FM2 bestanden, VPS gestartet
+- [ ] M16: FM3 + FM4 + FM6 bestanden
+- [ ] M18: FM5 bestanden — alle Fachmodule fertig
+- [ ] M20: Vertiefungsprojekt-Bericht + Präsentation abgegeben
+- [ ] M21: VM2 inkl. Masterarbeits-Vorkonzept
+- [ ] M24: Masterarbeit eingereicht — Abschluss
 
 ## 7. Literatur-Grundstock (aus dem Handbuch)
 
