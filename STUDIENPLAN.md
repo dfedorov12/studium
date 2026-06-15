@@ -141,11 +141,18 @@ VM1 + BPM1 ──► VM2 ──► Masterarbeit
 - [ ] M21: VM2 inkl. Masterarbeits-Vorkonzept
 - [ ] M24: Masterarbeit eingereicht — Abschluss
 
-## 7. Literatur-Grundstock (aus dem Handbuch)
+## 7. Offizielle Literaturliste (Stand 23.09.2025)
 
-- Pohlmann: *Cyber-Sicherheit* (taucht in FM1–FM4 auf — Standardwerk des Lehrgangs)
-- Heinrich/Riedl: *Informationsmanagement*; Krcmar: *Informationsmanagement*
-- Knoll: *Praxisorientiertes IT-Risikomanagement*
-- Tiemeyer (Hrsg.): *Handbuch IT-Management*
-- ISO/IEC 27001, 27005:2023, 31000:2018 · BSI-Standards 200-1/200-3/200-4
-- Theisen: *Wissenschaftliches Arbeiten* (für VPS, VM1, VM2, Masterarbeit)
+**eBooks – HBW-Bibliothek** (online):
+- Theisen: *Wissenschaftliches Arbeiten* (ISBN 978-3-8006-6373-6) → BPM1, VM1, VPS, VM2
+- Johannsen & Goeken: *Referenzmodelle für IT-Governance* (978-3-89864-616-1) → FM6
+- Pohlmann: *Cyber-Sicherheit* (978-3-658-36242-3) → FM1–FM4 (Standardwerk)
+- Kofler: *Hacking & Security* (978-3-8362-9164-4) → FM1, FM2
+
+**Normen – WBS eCampus** (Dokumente):
+- ISO/IEC 22301:2019 (BCM) → FM3 · ISO/IEC 27035-1:2024 (Incident Mgmt) → FM3/FM4
+- ISO/IEC 27001:2022 (ISMS), 27002:2022 (Controls), 27007:2022 (Audit), DIN 27037:2016 (Forensik) → FM2
+- ISO/IEC 27005:2024 (InfoSec-Risiko), ISO/IEC 31000:2018 (Risiko) → FM4
+- DIN 27017:2021 (Cloud-Sicherheit), DIN 27018:2020 (Cloud-Datenschutz) → FM5
+
+Im Tracker: Header **„📚 Literatur"** (Gesamtliste mit Lese-/Vorhanden-Häkchen) und je Modul im Tab **Literatur** (modulbezogen, synchron). Weitere Handbuch-Empfehlungen (Heinrich/Riedl, Krcmar, Knoll, Tiemeyer, BSI 200-1/200-3/200-4) sind je Modul hinterlegt.

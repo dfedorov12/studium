@@ -151,3 +151,22 @@ const TOPIC_STATI = [
 const MONTHS_DE = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
 /* Leitner-Intervalle in Tagen je Box (Index 0 ungenutzt) */
 const LEITNER = [0, 1, 3, 7, 14, 30];
+
+/* Offizielle Literaturliste (Stand 23.09.2025). key = Titel (eindeutig).
+   src: Bezugsquelle · type: eBook (HBW-Bibliothek) / Norm (WBS eCampus) */
+const OFFICIAL_LIT = [
+  {t:'Theisen: Wissenschaftliches Arbeiten – Erfolgreich bei Bachelor- und Masterarbeit', id:'ISBN 978-3-8006-6373-6', src:'HBW Bibliothek', type:'eBook', mods:['BPM1','VM1','VPS','VM2'], note:'wissenschaftliches Arbeiten'},
+  {t:'Johannsen & Goeken: Referenzmodelle für IT-Governance', id:'ISBN 978-3-89864-616-1', src:'HBW Bibliothek', type:'eBook', mods:['FM6']},
+  {t:'Pohlmann: Cyber-Sicherheit', id:'ISBN 978-3-658-36242-3', src:'HBW Bibliothek', type:'eBook', mods:['FM1','FM2','FM3','FM4'], note:'Standardwerk des Lehrgangs'},
+  {t:'Kofler: Hacking & Security', id:'ISBN 978-3-8362-9164-4', src:'HBW Bibliothek', type:'eBook', mods:['FM1','FM2']},
+  {t:'ISO/IEC 22301', id:'2019-10', src:'WBS eCampus', type:'Norm', mods:['FM3'], note:'Business Continuity Management'},
+  {t:'ISO/IEC 27001', id:'2022-10', src:'WBS eCampus', type:'Norm', mods:['FM2'], note:'ISMS'},
+  {t:'ISO/IEC 27002', id:'2022-02', src:'WBS eCampus', type:'Norm', mods:['FM2'], note:'Maßnahmen/Controls'},
+  {t:'ISO/IEC 27005', id:'2024-05', src:'WBS eCampus', type:'Norm', mods:['FM4'], note:'InfoSec-Risikomanagement'},
+  {t:'ISO/IEC 27007', id:'2022-10', src:'WBS eCampus', type:'Norm', mods:['FM2'], note:'Leitfaden ISMS-Audit'},
+  {t:'DIN ISO/IEC 27017', id:'2021-11', src:'WBS eCampus', type:'Norm', mods:['FM5'], note:'Cloud-Sicherheit'},
+  {t:'DIN ISO/IEC 27018', id:'2020-08', src:'WBS eCampus', type:'Norm', mods:['FM5'], note:'Cloud-Datenschutz (PII)'},
+  {t:'ISO/IEC 27035-1', id:'2024-03', src:'WBS eCampus', type:'Norm', mods:['FM3','FM4'], note:'Incident Management'},
+  {t:'DIN ISO/IEC 27037', id:'2016-12', src:'WBS eCampus', type:'Norm', mods:['FM2'], note:'digitale Beweismittel / Forensik'},
+  {t:'ISO/IEC 31000', id:'2018-10', src:'WBS eCampus', type:'Norm', mods:['FM4'], note:'Risikomanagement (generisch)'}
+];

@@ -6,7 +6,7 @@ const THEME_KEY = 'mba-theme';
 function defaultState(){
   const s = {v:2, savedAt:'', start:'', maEcts:'', lastBackup:'',
     wahl:{BWM1:true, BWM2:false}, modules:{}, miles:{}, topics:{}, notes:{}, projects:{}, cards:[],
-    lit:{}, peer:{contacts:[], meetings:[], tasks:[]}, log:{}, ectsLog:[]};
+    lit:{}, litList:{}, peer:{contacts:[], meetings:[], tasks:[]}, log:{}, ectsLog:[]};
   MODULES.forEach(m=>{
     s.modules[m.id] = {status:'offen', grade:'', date:'', examDate:'', notes:''};
     s.topics[m.id] = {};
@@ -44,6 +44,7 @@ function migrate(data){
   const s = Object.assign(def, data);
   ['modules','topics','projects','notes','lit'].forEach(k=>{ s[k] = Object.assign({}, def[k], data[k]||{}); });
   s.peer = Object.assign({contacts:[], meetings:[], tasks:[]}, data.peer||{});
+  s.litList = data.litList || {};
   s.log = data.log || {};
   s.ectsLog = Array.isArray(data.ectsLog) ? data.ectsLog : [];
   // v1 → v2: LV-Checkboxen entfallen (ersetzt durch Themenbaum); fehlende Modul-Felder auffüllen
@@ -554,8 +555,10 @@ function matchesSearch(m){
   // Volltextsuche in Notizen (Studienordner-Cache bzw. Browser-Kopie)
   const note = notesCache[m.id] ?? state.notes[m.id] ?? '';
   if(note.toLowerCase().includes(q)) return true;
-  // Literatur
-  const lit = (m.lit||[]).concat((state.lit[m.id]?.own||[]).map(o=>o.t));
+  // Literatur (Handbuch, eigene + offizielle Liste)
+  const lit = (m.lit||[])
+    .concat((state.lit[m.id]?.own||[]).map(o=>o.t))
+    .concat(OFFICIAL_LIT.filter(e=>(e.mods||[]).includes(m.id)).map(e=>e.t+' '+(e.note||'')));
   return lit.some(l=>l.toLowerCase().includes(q));
 }
 
@@ -686,6 +689,31 @@ function renderModal(){
 function renderLit(m, body){
   const L = state.lit[m.id];
   body.innerHTML = '';
+
+  // Offizielle Literaturliste, die diesem Modul zugeordnet ist
+  const official = OFFICIAL_LIT.filter(e=>(e.mods||[]).includes(m.id));
+  if(official.length){
+    const head = document.createElement('h4');
+    head.style.cssText = 'font-size:.74rem;font-weight:700;color:var(--mut);margin-bottom:6px';
+    head.textContent = 'Offizielle Literaturliste';
+    body.appendChild(head);
+    const ow = document.createElement('div');
+    ow.className = 'ptodos';
+    official.forEach(e=>{
+      const done = !!state.litList[e.t];
+      const lab = document.createElement('label');
+      lab.className = done?'c':'';
+      lab.innerHTML = `<input type="checkbox" ${done?'checked':''}/><span>${e.type==='Norm'?'📐':'📕'} ${esc(e.t)} <span style="color:var(--mut)">· ${esc(e.id)} · ${esc(e.src)}${e.note?' · '+esc(e.note):''}</span></span>`;
+      lab.querySelector('input').onchange = ev=>{ state.litList[e.t] = ev.target.checked; save(false); renderLit(m, body); };
+      ow.appendChild(lab);
+    });
+    body.appendChild(ow);
+    const head2 = document.createElement('h4');
+    head2.style.cssText = 'font-size:.74rem;font-weight:700;color:var(--mut);margin:14px 0 6px';
+    head2.textContent = 'Weitere Empfehlungen (Handbuch) & eigene Quellen';
+    body.appendChild(head2);
+  }
+
   const wrap = document.createElement('div');
   wrap.className = 'ptodos';
   if(m.lit){
@@ -1055,6 +1083,48 @@ function addDays(iso, d){
   return dt.toISOString().slice(0,10);
 }
 
+/* ════════════════ Offizielle Literaturliste (global) ════════════════ */
+function openLit(){
+  modalMod = null;
+  overlay.classList.add('open');
+  renderLitList();
+}
+function renderLitList(){
+  const groups = [
+    {src:'HBW Bibliothek', label:'📕 HBW-Bibliothek (eBooks)', hint:'online in der Bibliothek der Hochschule Burgenland Weiterbildung'},
+    {src:'WBS eCampus', label:'📐 Normen im WBS eCampus', hint:'als Dokumente im eCampus hinterlegt'}
+  ];
+  const done = OFFICIAL_LIT.filter(e=>state.litList[e.t]).length;
+  document.getElementById('modal').innerHTML = `
+    <div class="mhead"><span class="chip" style="margin-top:4px">📚</span><h3>Offizielle Literaturliste <span style="font-weight:600;color:var(--mut)">(${done}/${OFFICIAL_LIT.length})</span></h3><button class="x">✕</button></div>
+    <div class="tabbody" id="litbody"></div>`;
+  document.querySelector('#modal .x').onclick = closeModal;
+  const body = document.getElementById('litbody');
+  groups.forEach(g=>{
+    const items = OFFICIAL_LIT.filter(e=>e.src===g.src);
+    const h = document.createElement('h4');
+    h.style.cssText = 'font-size:.78rem;font-weight:700;margin:4px 0 6px';
+    h.innerHTML = `${g.label} <span style="font-weight:500;color:var(--mut)">— ${g.hint}</span>`;
+    body.appendChild(h);
+    const ow = document.createElement('div');
+    ow.className = 'ptodos';
+    ow.style.marginBottom = '14px';
+    items.forEach(e=>{
+      const checked = !!state.litList[e.t];
+      const lab = document.createElement('label');
+      lab.className = checked?'c':'';
+      lab.innerHTML = `<input type="checkbox" ${checked?'checked':''}/><span>${esc(e.t)} <span style="color:var(--mut)">· ${esc(e.id)}${e.note?' · '+esc(e.note):''}</span> ${(e.mods||[]).map(x=>'<span class="box" style="font-size:.6rem">'+x+'</span>').join(' ')}</span>`;
+      lab.querySelector('input').onchange = ev=>{ state.litList[e.t] = ev.target.checked; save(false); renderLitList(); };
+      ow.appendChild(lab);
+    });
+    body.appendChild(ow);
+  });
+  const note = document.createElement('div');
+  note.className = 'placeholder';
+  note.textContent = 'Stand 23.09.2025. Häkchen = vorhanden/gelesen — synchron mit dem Literatur-Tab der jeweiligen Module.';
+  body.appendChild(note);
+}
+
 /* ════════════════ PeerGroup ════════════════ */
 let peerTab = 'kontakte';
 function openPeer(tab){
@@ -1249,6 +1319,7 @@ document.getElementById('file-import').addEventListener('change', e=>{
 document.getElementById('btn-ics').addEventListener('click', icsExport);
 document.getElementById('btn-folder').addEventListener('click', connectFolder);
 document.getElementById('btn-peer').addEventListener('click', ()=>openPeer());
+document.getElementById('btn-lit').addEventListener('click', openLit);
 document.getElementById('btn-official').addEventListener('click', adoptOfficialDates);
 document.getElementById('learnbox-btn').addEventListener('click', ()=>startLearning(null));
 document.getElementById('start').addEventListener('change', e=>{ state.start = e.target.value; save(); });
