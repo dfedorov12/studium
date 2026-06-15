@@ -4,11 +4,11 @@ const KEY = 'mba-tracker-v1';
 const THEME_KEY = 'mba-theme';
 
 function defaultState(){
-  const s = {v:2, savedAt:'', start:'', maEcts:'', lastBackup:'',
+  const s = {v:2, savedAt:'', start:FACHSTUDIUM_START, maEcts:'', lastBackup:'',
     wahl:{BWM1:true, BWM2:false}, modules:{}, miles:{}, topics:{}, notes:{}, projects:{}, cards:[],
     lit:{}, litList:{}, peer:{contacts:[], meetings:[], tasks:[]}, log:{}, ectsLog:[]};
   MODULES.forEach(m=>{
-    s.modules[m.id] = {status:'offen', grade:'', date:'', examDate:'', notes:''};
+    s.modules[m.id] = {status:'offen', grade:'', date:'', examDate:m.sched?m.sched.ex:'', notes:''};
     s.topics[m.id] = {};
     s.projects[m.id] = [];
     s.lit[m.id] = {read:{}, own:[]};
@@ -48,9 +48,12 @@ function migrate(data){
   s.log = data.log || {};
   s.ectsLog = Array.isArray(data.ectsLog) ? data.ectsLog : [];
   // v1 → v2: LV-Checkboxen entfallen (ersetzt durch Themenbaum); fehlende Modul-Felder auffüllen
+  if(!s.start) s.start = FACHSTUDIUM_START;
   MODULES.forEach(m=>{
     s.modules[m.id] = Object.assign({status:'offen',grade:'',date:'',examDate:'',notes:''}, s.modules[m.id]||{});
     delete s.modules[m.id].lv;
+    // Offizielle Prüfungstermine standardmäßig eintragen (nur wenn leer)
+    if(m.sched && !s.modules[m.id].examDate) s.modules[m.id].examDate = m.sched.ex;
     if(!s.topics[m.id]) s.topics[m.id] = {};
     if(!s.projects[m.id]) s.projects[m.id] = def.projects[m.id]||[];
     if(!s.lit[m.id]) s.lit[m.id] = {read:{}, own:[]};
