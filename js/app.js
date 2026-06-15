@@ -869,7 +869,15 @@ async function renderMaterial(m, body){
 function renderProjects(m, body){
   const projs = state.projects[m.id];
   body.innerHTML = '';
-  if(!projs.length) body.innerHTML = '<div class="placeholder">Noch keine Projekte für dieses Modul.</div>';
+  // Vorlagen-Leiste — für jede (auch künftige) Projektarbeit
+  const vbar = document.createElement('div');
+  vbar.className = 'vorlagenbar';
+  vbar.innerHTML = `<span>📎 Vorlagen:</span>
+    ${VORLAGEN.map(v=>`<a href="${v.file}" download="${v.dl}">${v.icon} ${esc(v.dl)}</a>`).join('')}
+    <button class="btn small" id="v-info">Format & APA</button>`;
+  vbar.querySelector('#v-info').onclick = openVorlagen;
+  body.appendChild(vbar);
+  if(!projs.length){ const ph=document.createElement('div'); ph.className='placeholder'; ph.textContent='Noch keine Projekte für dieses Modul.'; body.appendChild(ph); }
   projs.forEach(p=>{
     const doneN = p.todos.filter(t=>t.done).length;
     const el = document.createElement('div');
@@ -1081,6 +1089,26 @@ function startLearning(mid){
 function addDays(iso, d){
   const dt = new Date(iso); dt.setDate(dt.getDate()+d);
   return dt.toISOString().slice(0,10);
+}
+
+/* ════════════════ Vorlagen & Zitieren (global) ════════════════ */
+function openVorlagen(){
+  modalMod = null;
+  overlay.classList.add('open');
+  document.getElementById('modal').innerHTML = `
+    <div class="mhead"><span class="chip" style="margin-top:4px">📎</span><h3>Vorlagen & Zitieren</h3><button class="x">✕</button></div>
+    <div class="tabbody">
+      <div class="files">${VORLAGEN.map(v=>`
+        <div class="file"><span>${v.icon}</span><span class="fn"><b>${esc(v.name)}</b><br><span style="color:var(--mut);font-size:.72rem">${esc(v.desc)}</span></span>
+        <a class="btn small primary" href="${v.file}" download="${v.dl}">⬇ Download</a></div>`).join('')}
+      </div>
+      <h4 style="font-size:.78rem;font-weight:700;margin:16px 0 6px">📐 Formatvorgaben (Word-Vorlage)</h4>
+      <div class="ptodos">${TEMPLATE_FORMAT.map(f=>`<div style="font-size:.78rem;display:flex;gap:7px"><span>•</span><span>${esc(f)}</span></div>`).join('')}</div>
+      <h4 style="font-size:.78rem;font-weight:700;margin:16px 0 6px">📑 APA7-Kurzreferenz</h4>
+      <table class="apa">${APA_CHEAT.map(c=>`<tr><td>${esc(c.k)}</td><td><code>${esc(c.v)}</code></td></tr>`).join('')}</table>
+      <div class="placeholder">Vollständige Regeln im APA-Leitfaden (Download oben). Diese Vorlagen sind auch in jedem Projekt-Tab verlinkt.</div>
+    </div>`;
+  document.querySelector('#modal .x').onclick = closeModal;
 }
 
 /* ════════════════ Offizielle Literaturliste (global) ════════════════ */
@@ -1320,6 +1348,7 @@ document.getElementById('btn-ics').addEventListener('click', icsExport);
 document.getElementById('btn-folder').addEventListener('click', connectFolder);
 document.getElementById('btn-peer').addEventListener('click', ()=>openPeer());
 document.getElementById('btn-lit').addEventListener('click', openLit);
+document.getElementById('btn-vorlagen').addEventListener('click', openVorlagen);
 document.getElementById('btn-official').addEventListener('click', adoptOfficialDates);
 document.getElementById('learnbox-btn').addEventListener('click', ()=>startLearning(null));
 document.getElementById('start').addEventListener('change', e=>{ state.start = e.target.value; save(); });

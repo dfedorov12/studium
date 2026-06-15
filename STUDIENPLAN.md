@@ -156,3 +156,10 @@ VM1 + BPM1 ──► VM2 ──► Masterarbeit
 - DIN 27017:2021 (Cloud-Sicherheit), DIN 27018:2020 (Cloud-Datenschutz) → FM5
 
 Im Tracker: Header **„📚 Literatur"** (Gesamtliste mit Lese-/Vorhanden-Häkchen) und je Modul im Tab **Literatur** (modulbezogen, synchron). Weitere Handbuch-Empfehlungen (Heinrich/Riedl, Krcmar, Knoll, Tiemeyer, BSI 200-1/200-3/200-4) sind je Modul hinterlegt.
+
+## 8. Vorlagen für schriftliche Arbeiten
+
+- **Word-Vorlage Modulprojektarbeit** (.dotx): Titelblatt (Titel · Studiengang · LV/Modul · Name · E-Mail · Datum), Verzeichnisse, Kapitelstruktur (1 Einleitung → 1.1 Aufgabenstellung · 1.2 Zielsetzung/Nutzen → Hauptkapitel → Literaturverzeichnis → Anhang).
+- **Formatvorgaben:** Arial 12 pt, Zeilenabstand 1,5, Blocksatz + automatische Silbentrennung; Verzeichnisse römisch, Textteil arabisch, ab Literaturverzeichnis römisch fortführen; Literaturverzeichnis alphabetisch.
+- **APA-Zitierleitfaden** (Stand 20.03.2026, APA7): Kurz-/Vollbeleg für Monographie, Sammelband, Journal, Website, KI/ChatGPT, Gesetze u. a.
+- Im Tracker: Header **„📎 Vorlagen"** (Downloads + Formatcheckliste + APA7-Kurzreferenz) und als Vorlagen-Leiste in **jedem Projekt-Tab** (für alle aktuellen und künftigen Projektarbeiten).

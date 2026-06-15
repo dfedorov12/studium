@@ -190,6 +190,16 @@ html[data-theme=dark]{--h1:#27406e;--h2:#35589c;--h3:#4a7ae6;--h4:#7da3f5}
 .heat-sum{font-size:.7rem;color:var(--mut)}
 #ectschart{width:100%;height:auto;max-height:170px}
 
+/* Vorlagen */
+.vorlagenbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--blue-soft);border-radius:9px;padding:8px 12px;margin-bottom:12px;font-size:.74rem}
+.vorlagenbar span{font-weight:600;color:var(--mut)}
+.vorlagenbar a{color:var(--blue);text-decoration:none;font-weight:600;border:1px solid var(--line);border-radius:7px;padding:4px 9px;background:var(--card)}
+.vorlagenbar a:hover{border-color:var(--blue)}
+table.apa{width:100%;border-collapse:collapse;font-size:.76rem}
+table.apa td{border:1px solid var(--line);padding:5px 9px;vertical-align:top}
+table.apa td:first-child{font-weight:700;white-space:nowrap;width:1%;color:var(--mut)}
+table.apa code{font-size:.72rem;background:none}
+
 /* MC-Quiz */
 .mcopts{display:flex;flex-direction:column;gap:7px;margin-top:16px;text-align:left}
 .mcopt{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:9px 13px;font-size:.82rem;cursor:pointer;text-align:left;color:var(--ink)}

@@ -149,6 +149,37 @@ const TOPIC_STATI = [
   {label:'●', title:'sitzt', cls:'t2'}
 ];
 const MONTHS_DE = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+
+/* Vorlagen für Projekte & schriftliche Arbeiten (im Repo unter vorlagen/) */
+const VORLAGEN = [
+  {name:'Word-Vorlage Modulprojektarbeit', file:'vorlagen/Vorlage_Modulprojektarbeit.dotx', dl:'Vorlage_Modulprojektarbeit.dotx', icon:'📄',
+   desc:'Offizielle .dotx — Titelblatt, Verzeichnisse, Kapitelstruktur & Formatvorgaben'},
+  {name:'APA-Zitierleitfaden (Stand 20.03.2026)', file:'vorlagen/APA-Zitierleitfaden.pdf', dl:'APA-Zitierleitfaden.pdf', icon:'📑',
+   desc:'Zitierrichtlinien nach APA7 — Kurz-/Vollbeleg für alle Quellentypen'}
+];
+/* Formatvorgaben laut Word-Vorlage */
+const TEMPLATE_FORMAT = [
+  'Schriftart Arial, 12 pt, Zeilenabstand 1,5, Blocksatz + automatische Silbentrennung',
+  'Titelblatt: Titel · Studiengang · LV/Modul · Name · E-Mail · Datum',
+  'Aufbau: (Abkürzungs-/Abbildungs-/Tabellenverzeichnis nur wenn verwendet) → 1 Einleitung (1.1 Aufgabenstellung · 1.2 Zielsetzung/Nutzen) → Hauptkapitel → Literaturverzeichnis → Anhang',
+  'Seitenzahlen: Verzeichnisse römisch, Textteil arabisch; ab Literaturverzeichnis römische Nummerierung fortführen',
+  'Einheitlich nach APA zitieren; Literaturverzeichnis alphabetisch, hängend, einfacher Zeilenabstand',
+  'Zum Schluss Inhaltsverzeichnis aktualisieren'
+];
+/* APA7-Kurzreferenz (Formatmuster aus dem Leitfaden) */
+const APA_CHEAT = [
+  {k:'Grundprinzip', v:'Kurzbeleg im Text (Autor, Jahr) → Vollbeleg im Literaturverzeichnis'},
+  {k:'2 Autor:innen', v:'(Müller & Schmidt, 2020)'},
+  {k:'>2 Autor:innen', v:'(Nagl et al., 2020)'},
+  {k:'Wörtliches Zitat', v:'„Zitat" (Müller, 2021, S. 45)'},
+  {k:'Narrativ', v:'Müller (2021) erklärt, dass …'},
+  {k:'Monographie', v:'Nachname, Init. (Jahr). Titel. Verlag. DOI'},
+  {k:'Sammelband', v:'Nachname, Init. (Jahr). Beitragstitel. In Init. Nachname (Ed.), Titel (pp. x–y). Verlag. DOI'},
+  {k:'Journal', v:'Nachname, Init. (Jahr). Titel. Zeitschrift, Band(Heft), Seiten. DOI'},
+  {k:'Website (Seite)', v:'Autor/Org. (Jahr, Monat Tag). Titel. Websitename. URL'},
+  {k:'KI / ChatGPT', v:'OpenAI. (2023). ChatGPT (Mar 14 version) [Large language model]. URL'},
+  {k:'Gesetz', v:'Name des Gesetzes, Quelle Paragraph (Jahr).'}
+];
 /* Leitner-Intervalle in Tagen je Box (Index 0 ungenutzt) */
 const LEITNER = [0, 1, 3, 7, 14, 30];
 
