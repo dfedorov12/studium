@@ -90,19 +90,19 @@ const MODULES = [
 const PROGRAM_ECTS = 120;
 
 const MILESTONES = [
-  {m:'M1–2',  mm:2,  t:'BPM1 abgeschlossen (beide MC-Prüfungen)', mods:['BPM1']},
-  {m:'M6',   mm:6,  t:'Basisstudium komplett (alle Modulprojektarbeiten abgegeben)', mods:['BPM2','BPM3','BPM4','BWM1','BWM2']},
-  {m:'M7',   mm:7,  t:'VM1 absolviert, PeerGroup gebildet', mods:['VM1']},
-  {m:'M8',   mm:8,  t:'Vertiefungsprojekt-Thema mit Arbeitgeber abgestimmt', mods:['VP']},
-  {m:'M10',  mm:10, t:'FM1 bestanden', mods:['FM1']},
-  {m:'M12',  mm:12, t:'FM2 bestanden, VPS gestartet', mods:['FM2','VPS']},
-  {m:'M16',  mm:16, t:'FM3 + FM4 bestanden', mods:['FM3','FM4']},
-  {m:'M18',  mm:18, t:'FM5 + FM6 bestanden — alle Fachmodule fertig', mods:['FM5','FM6']},
-  {m:'M20',  mm:20, t:'Vertiefungsprojekt: Bericht + Präsentation abgegeben', mods:['VP']},
-  {m:'M21',  mm:21, t:'VM2 inkl. Masterarbeits-Vorkonzept', mods:['VM2']},
-  {m:'M24',  mm:24, t:'Masterarbeit eingereicht', mods:['MA']}
+  {m:'M2',   mm:2,  t:'BPM1 abgeschlossen (beide MC-Prüfungen)', mods:['BPM1']},
+  {m:'M6',   mm:6,  t:'Basisstudium komplett (alle Modulprojektarbeiten abgegeben) — Ende Sem. 1', mods:['BPM2','BPM3','BPM4','BWM1','BWM2']},
+  {m:'M8',   mm:8,  t:'VM1 absolviert, PeerGroup gebildet', mods:['VM1']},
+  {m:'M9',   mm:9,  t:'Vertiefungsprojekt-Thema mit Arbeitgeber abgestimmt', mods:['VP']},
+  {m:'M11',  mm:11, t:'FM1 bestanden', mods:['FM1']},
+  {m:'M13',  mm:13, t:'FM2 bestanden, VPS gestartet — Ende Sem. 2', mods:['FM2','VPS']},
+  {m:'M18',  mm:18, t:'FM3 + FM4 + FM6 bestanden — Ende Sem. 3', mods:['FM3','FM4','FM6']},
+  {m:'M22',  mm:22, t:'FM5 bestanden — alle Fachmodule fertig', mods:['FM5']},
+  {m:'M24',  mm:24, t:'Vertiefungsprojekt: Bericht + Präsentation abgegeben — Ende Sem. 4', mods:['VP']},
+  {m:'M28',  mm:28, t:'VM2 inkl. Masterarbeits-Vorkonzept', mods:['VM2']},
+  {m:'M30',  mm:30, t:'Masterarbeit eingereicht — Abschluss', mods:['MA']}
 ];
-const PLAN_MONTHS = 24;
+const PLAN_MONTHS = 30; // Regelstudiendauer 5 Semester
 
 /* Vorbefüllte Projekte je Modul */
 const DEFAULT_PROJECTS = {
