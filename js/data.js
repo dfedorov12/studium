@@ -45,32 +45,39 @@ const MODULES = [
    ]},
 
   {id:'VM1', phase:'fach', name:'Vorbereitungsmodul für die Fachmodule', ects:2, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['BPM1'],
+   sched:{von:'2026-09-29', bis:'2026-10-20', ex:'2026-10-23', ex2:'2026-10-24'},
    tip:'Hier passiert die PeerGroup-Einteilung (WBS LearnSpace 3D® / eCampus).',
    topics:[{g:'Inhalte', items:['Lernumgebung LearnSpace 3D® & eCampus','Ablauf und Struktur der Module','PeerGroup-Bildung & erste Gruppenarbeit','Werkzeuge & Methoden für Gruppenarbeiten']}],
    lit:['Theisen: Wissenschaftliches Arbeiten — Erfolgreich bei Bachelor- und Masterarbeiten','HS Burgenland Online-Bibliothek (Videos & FAQs)','Zitationssoftware: Citavi und Zotero']},
   {id:'FM1', phase:'fach', name:'Einführung Informationssicherheit & angewandte Kryptographie', ects:7, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['VM1'],
+   sched:{von:'2026-10-27', bis:'2026-12-15', ex:'2026-12-18', ex2:'2026-12-19'},
    topics:[{g:'Inhalte', items:['Einführung in die Informationssicherheit','Grundbegriffe und Abgrenzungen','Einordnung ins Informationsmanagement','Geschichtliche Entwicklung der InfoSec','Methoden & Algorithmen der Kryptographie','Anwendungsfälle angewandter Kryptographie']}],
    lit:['Heinrich/Riedl: Informationsmanagement — Grundlagen, Aufgaben, Methoden','Pohlmann: Cyber-Sicherheit','Sowa: Management der Informationssicherheit — Kontrolle und Optimierung','Buchmann: Einführung in die Kryptographie']},
   {id:'FM2', phase:'fach', name:'IT-Sicherheitsmanagement & Grundlagen IT-Forensik', ects:7, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['FM1'],
+   sched:{von:'2027-01-12', bis:'2027-03-02', ex:'2027-03-05', ex2:'2027-03-06'},
    tip:'ISO 27001, BSI 200-1, ISMS-Audit & Zertifizierung.',
    topics:[{g:'Inhalte', items:['IT-Sicherheitsmanagement & Standards (ISO 27001, BSI 200-1)','Bedrohungen und Schwachstellen','Managementkonzepte für Informationssicherheit','ISMS-Audit-Ablauf & Zertifizierung','Grundlagen der IT-Forensik','Schwachstellenanalysen: Planung & Durchführung']}],
    lit:['Heinrich/Riedl: Informationsmanagement','Krcmar: Informationsmanagement','Pohlmann: Cyber-Sicherheit','Geschonneck: Computer Forensik','Carvey: Windows Forensic Analysis']},
   {id:'FM3', phase:'fach', name:'IT-Desaster Recovery & Business Continuity Management', ects:7, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['FM1','FM2'],
+   sched:{von:'2027-03-09', bis:'2027-04-27', ex:'2027-04-29', ex2:'2027-04-30'},
    tip:'BSI 200-4, Notfallkonzept, Krisenmanagement.',
    topics:[{g:'Inhalte', items:['Normen & Standards zu BCM und DRP','Notfallmanagement-Prozess & Notfallkonzept','Notfallbewältigung & Krisenmanagement','Tests, Übungen & KVP des Notfallkonzepts','ISO-Normen vs. BSI-Standard 200-4']}],
    lit:['Brandes/Heller: Qualitätsmanagement in agilen IT-Projekten — quo vadis?','Tiemeyer (Hrsg.): Handbuch IT-Management','Pohlmann: Cyber-Sicherheit']},
   {id:'FM4', phase:'fach', name:'IT-Risikomanagement & Awareness', ects:7, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['FM1','FM2'],
-   tip:'ISO 27005 / 31000, BSI 200-3, Cyber-Lagebilder.',
+   sched:{von:'2027-05-04', bis:'2027-06-22', ex:'2027-06-25', ex2:'2027-06-26'},
+   tip:'ISO 27005 / 31000, BSI 200-3, Cyber-Lagebilder. Danach Sommerpause bis FM5 (Ende Aug).',
    topics:[{g:'Inhalte', items:['Risikomanagement-Prozess (ISO 27005, ISO 31000, BSI 200-3)','Identifikation von Risiken & IT-Risikoanalyse','Risikowahrnehmung','Entscheidung in Risikosituationen','Awareness & Bewusstseinsschaffung','Cyber-Lagebilder: Aufbau & Betrieb']}],
    lit:['Tiemeyer (Hrsg.): Handbuch IT-Management','Pohlmann: Cyber-Sicherheit','Knoll: Praxisorientiertes IT-Risikomanagement','ISO/IEC 27005:2023','ISO/IEC 31000:2018']},
-  {id:'FM6', phase:'fach', name:'IT-Recht, -Governance & -Compliance', ects:7, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['FM2'],
-   tip:'Flexibel einschiebbar — braucht nur FM2.',
-   topics:[{g:'Inhalte', items:['IT-Governance-Referenzmodelle & Standards','IT-Governance vs. IT-Management vs. IT-Controlling','AGB & IT-Vertragsrecht','Recht des elektronischen Geschäftsverkehrs','Datenschutz (DSGVO)','Kosten/Nutzen von Standards']}],
-   lit:['Beims/Ziegenbein: IT-Servicemanagement in der Praxis mit ITIL','Johannsen/Goeken: Referenzmodelle für IT-Governance','Krcmar: Informationsmanagement','Tiemeyer (Hrsg.): Handbuch IT-Management','Aktuelle Fachartikel zu IT-Governance, IT-Recht, IT-Compliance + Judikatur']},
   {id:'FM5', phase:'fach', name:'Technologie-Management für Sicherheits- & Risikomanagement', ects:7, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['FM1','FM2','FM3','FM4'],
-   tip:'Als letztes Fachmodul einplanen (braucht FM1–FM4).',
+   sched:{von:'2027-08-31', bis:'2027-10-19', ex:'2027-10-22', ex2:'2027-10-23'},
+   tip:'Erstes Modul nach der Sommerpause.',
    topics:[{g:'Inhalte', items:['Management von Technologien & IKT-Systemen','Technische Sicherheitsmaßnahmen','Lebenszyklus von IKT-Systemen & -Anwendungen','Anforderungsanalyse & Beschaffung','Asset- & Konfigurationsmanagement (CMDB)','Analyse von Cloud-Systemen','Berechtigungsmanagement']}],
    lit:['Hansen/Neumann: Wirtschaftsinformatik 1','Heinrich/Riedl: Informationsmanagement','Knoll: Praxisorientiertes IT-Risikomanagement','Stelzer: Technologische Kompetenz, Technologiemanagement und Technologievorausschau','Waidner/Backes/Müller-Quade: Development of Secure Software with Security by Design','Aktuelle Fachartikel zum IT-Sicherheits- und Risikomanagement']},
+  {id:'FM6', phase:'fach', name:'IT-Recht, -Governance & -Compliance', ects:7, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['FM2'],
+   sched:{von:'2027-10-27', bis:'2027-12-14', ex:'2027-12-17', ex2:'2027-12-18'},
+   tip:'Letztes Fachmodul vor dem Masterarbeits-Seminar.',
+   topics:[{g:'Inhalte', items:['IT-Governance-Referenzmodelle & Standards','IT-Governance vs. IT-Management vs. IT-Controlling','AGB & IT-Vertragsrecht','Recht des elektronischen Geschäftsverkehrs','Datenschutz (DSGVO)','Kosten/Nutzen von Standards']}],
+   lit:['Beims/Ziegenbein: IT-Servicemanagement in der Praxis mit ITIL','Johannsen/Goeken: Referenzmodelle für IT-Governance','Krcmar: Informationsmanagement','Tiemeyer (Hrsg.): Handbuch IT-Management','Aktuelle Fachartikel zu IT-Governance, IT-Recht, IT-Compliance + Judikatur']},
 
   {id:'VPS', phase:'praxis', name:'Vertiefungsprojektseminar', ects:3, exam:'immanenter Prüfungscharakter', deps:['BPM1'],
    tip:'Begleitendes Coaching während des gesamten Vertiefungsprojekts.',
@@ -80,14 +87,17 @@ const MODULES = [
    tip:'Thema im eigenen Unternehmen — z. B. Compliance-Richtlinien ausrollen, ISMS aufbauen, Risikoanalyse.'},
 
   {id:'VM2', phase:'abschluss', name:'Seminar zur Masterarbeit', ects:4, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 % + Vorkonzept', deps:['BPM1','VM1'],
-   tip:'Fester 6-Wochen-Ablauf bis zur Vorkonzept-Abgabe.',
+   sched:{von:'2028-01-11', bis:'2028-02-01', ex:'2028-02-19', ex2:'2028-02-20'},
+   tip:'6-Wochen-Ablauf + individuelle Coachingtermine bis zur Prüfung. Danach Masterarbeit (max. 6 Monate ab Vorkonzept-Genehmigung).',
    topics:[{g:'Inhalte', items:['Quantitative & qualitative Forschungsmethoden','Wissenschaftlicher Schreibstil („Goldene Regeln“)','Themenfindung & Eingrenzung','Vorkonzept erstellen','Recherchedatenbanken, Citavi/Zotero']}],
    lit:['Döring/Bortz: Forschungsmethoden und Evaluation','Berekoven/Eckert/Ellenrieder: Marktforschung','Ebster/Stalzer: Wissenschaftliches Arbeiten für Wirtschafts- und Sozialwissenschaftler','Hienerth/Huber/Süßenbacher: Wissenschaftliches Arbeiten kompakt','Theisen: Wissenschaftliches Arbeiten','Karmasin/Ribing: Die Gestaltung wissenschaftlicher Arbeiten','Fachzeitschriften / Journals']},
   {id:'MA', phase:'abschluss', name:'Masterarbeit', ects:null, exam:'lt. Studien-/Prüfungsordnung', deps:['VM2'],
-   tip:'ECTS werden automatisch als Rest auf 120 berechnet — bei Bedarf im Modul manuell überschreiben.'}
+   tip:'Beginn mit Genehmigung des Vorkonzepts + Zuweisung Betreuer:in, max. 6 Monate Bearbeitungszeit. ECTS automatisch als Rest auf 120 (bei Bedarf manuell überschreiben).'}
 ];
 /* Gesamtumfang des Professional-MBA */
 const PROGRAM_ECTS = 120;
+/* Offizieller Fachstudium-Starttermin (Ablaufplan WBS, Live-Online) */
+const FACHSTUDIUM_START = '2026-09';
 
 const MILESTONES = [
   {m:'M2',   mm:2,  t:'BPM1 abgeschlossen (beide MC-Prüfungen)', mods:['BPM1']},

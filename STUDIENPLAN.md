@@ -59,6 +59,27 @@ Jede LV muss einzeln positiv abgeschlossen werden.
 
 ---
 
+## 2b. Offizieller Fachstudium-Terminplan (WBS-Ablaufplan)
+
+Fachstudium **Live-Online im WBS LearnSpace 3D®**, Start **29.09.2026**, Unterricht Di/Do **18:00–21:15 Uhr** (Feiertage verschieben einzelne Termine). Die Fachmodule laufen **streng sequenziell** in dieser Reihenfolge — die Lage ist fix vorgegeben:
+
+| Modul | Unterricht | Abschlussprüfung |
+|---|---|---|
+| VM1 Vorbereitungsmodul | 29.09.–20.10.2026 | **23.+24.10.2026** |
+| FM1 Einführung InfoSec & Kryptographie | 27.10.–15.12.2026 | **18.+19.12.2026** |
+| FM2 IT-Sicherheitsmgmt & IT-Forensik | 12.01.–02.03.2027 | **05.+06.03.2027** |
+| FM3 DR & Business Continuity Mgmt | 09.03.–27.04.2027 | **29.+30.04.2027** |
+| FM4 IT-Risikomanagement & Awareness | 04.05.–22.06.2027 | **25.+26.06.2027** |
+| *Sommerpause* | Juli–Aug 2027 | |
+| FM5 Technologie-Management | 31.08.–19.10.2027 | **22.+23.10.2027** |
+| FM6 IT-Recht, -Governance & -Compliance | 27.10.–14.12.2027 | **17.+18.12.2027** |
+| VM2 Seminar zur Masterarbeit | 11.01.–01.02.2028 | **19.+20.02.2028** |
+| Masterarbeit | ab Vorkonzept-Genehmigung | max. 6 Monate |
+
+- **Basisstudium** (BPM/BWM) ist davon unabhängig — vor, während oder nach dem Fachstudium absolvierbar (Online-Selbststudium).
+- **Vertiefungsprojekt** (12 ECTS, nur MBA 120) läuft **während** des Fachstudiums; das begleitende **VPS** findet an **7 zusätzlichen Abendterminen** statt (Termine werden noch bekanntgegeben).
+- Im Tracker per Button **„📅 Offizielle Termine"** übernehmbar (setzt Start + alle Prüfungstermine, fließt in ICS-Export und Wochenplaner).
+
 ## 3. Abhängigkeitsgraph der Fachmodule
 
 ```

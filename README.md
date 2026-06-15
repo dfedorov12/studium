@@ -13,6 +13,7 @@ Persönliches Studien-Cockpit für den **MBA Informationssicherheit und IT-Risik
 - **Projekte:** Modulprojektarbeiten & Vertiefungsprojekt als Workflows (Idee → … → Bewertet) mit To-dos und Deadlines — Vertiefungsprojekt mit den Bewertungskriterien aus dem Handbuch vorbefüllt
 - **Lernkarten:** eigener Fragenpool pro Modul mit Leitner-Spaced-Repetition (1/3/7/14/30 Tage), „heute fällig“-Widget, **MC-Quiz-Modus** (Falschantworten → Abfrage wie in der echten Prüfung) und **Import/Export** (JSON oder CSV `frage;antwort;falsch1;falsch2…`) — fertige Prompt-Vorlage zum Generieren aus Skripten: [PROMPT.md](PROMPT.md)
 - **Statistik:** Lern-Heatmap (26 Wochen, Themen/Karten/Projektschritte) + ECTS-Kurve gegen die Plan-Linie
+- **Offizielle Termine:** echte Unterrichts- und Prüfungstermine des Fachstudiums (WBS-Ablaufplan, Start 29.09.2026) je Modul hinterlegt; per Button „📅 Offizielle Termine“ Start + alle 8 Fachprüfungen in einem Klick übernehmen (fließt in ICS-Export & Wochenplaner)
 - **Literatur:** Empfehlungen aus dem Handbuch pro Fachmodul vorbefüllt („gelesen“-Checkliste) + eigene Quellen
 - **Wochenplaner „Diese Woche“:** automatisch aus Meilensteinen, laufenden Modulen, fälligen Karten, Prüfungen, Abgaben und PeerGroup-Terminen (14-Tage-Blick)
 - **PeerGroup-Bereich:** Kontakte, Gruppentermine (fließen in ICS + Wochenplaner) und Gruppenaufgaben — Gruppenarbeiten zählen 40 % jeder Fachmodul-Note

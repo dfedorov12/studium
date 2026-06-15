@@ -318,6 +318,21 @@ function monthsElapsed(){
   return Math.max(0,(now.getFullYear()-y)*12 + (now.getMonth()+1-mo));
 }
 function fmtDate(iso){ return new Date(iso).toLocaleDateString('de-DE'); }
+function fmtRange(s){ return fmtDate(s.von)+'–'+fmtDate(s.bis); }
+function fmtExam(s){
+  const d1=new Date(s.ex), d2=s.ex2?new Date(s.ex2):null;
+  const dd=x=>String(x.getDate()).padStart(2,'0');
+  if(d2 && d1.getMonth()===d2.getMonth() && d1.getFullYear()===d2.getFullYear())
+    return `${dd(d1)}.+${dd(d2)}.${String(d1.getMonth()+1).padStart(2,'0')}.${d1.getFullYear()}`;
+  return fmtDate(s.ex)+(d2?' + '+fmtDate(s.ex2):'');
+}
+function adoptOfficialDates(){
+  if(!confirm('Starttermin 29.09.2026 und alle Prüfungstermine aus dem offiziellen Ablaufplan in den Tracker übernehmen?\n(Vorhandene Prüfungstermine der Fachmodule werden überschrieben.)')) return;
+  state.start = FACHSTUDIUM_START;
+  MODULES.forEach(m=>{ if(m.sched) state.modules[m.id].examDate = m.sched.ex; });
+  save();
+  toast('Offizielle Fachstudium-Termine übernommen (Start 29.09.2026).');
+}
 function dueCards(){ const t = today(); return state.cards.filter(c=>(c.due||t)<=t); }
 function fmtSize(b){ return b>1048576 ? (b/1048576).toFixed(1)+' MB' : Math.max(1,Math.round(b/1024))+' KB'; }
 function toast(msg){
@@ -570,6 +585,7 @@ function card(m){
       <span class="ects">${m.id==='MA' ? ectsOf(m)+' ECTS'+(state.maEcts?'':' (auto)') : m.ects+' ECTS'}</span>
     </div>
     <div class="meta"><b>Prüfung:</b> ${esc(m.exam)}${m.deps.length?` · <b>setzt voraus:</b> ${m.deps.join(', ')}`:''}</div>
+    ${m.sched?`<div class="meta">📅 ${fmtRange(m.sched)} · Prüfung <b>${fmtExam(m.sched)}</b></div>`:''}
     ${m.tip?`<div class="hint">💡 ${esc(m.tip)}</div>`:''}
     ${deps.length && st.status!=='bestanden' && active?`<div class="lock">🔒 wartet auf: ${deps.join(', ')}</div>`:''}
     ${tbar}
@@ -638,6 +654,7 @@ function renderModal(){
       <label style="font-size:.7rem;color:var(--mut);font-weight:600">Prüfungstermin <input type="date" id="m-exam" value="${esc(st.examDate)}"/></label>
       ${m.id==='MA'?`<label style="font-size:.7rem;color:var(--mut);font-weight:600">ECTS <input type="number" id="m-maects" min="1" max="40" value="${esc(state.maEcts)}" placeholder="${autoMaEcts()}" title="leer = automatisch Rest auf ${PROGRAM_ECTS}" style="width:58px;padding:4px 6px"/></label>`:''}
     </div>
+    ${m.sched?`<div class="schedbar">📅 <b>Offiziell:</b> Unterricht ${fmtRange(m.sched)} · Prüfung ${fmtExam(m.sched)} ${st.examDate===m.sched.ex?'<span class="ok">✓ im Tracker</span>':'<button class="btn small" id="m-adopt">übernehmen</button>'}</div>`:''}
     <div class="tabs">${tabs.map(t=>`<button class="tab ${t[0]===modalTab?'active':''}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</div>
     <div class="tabbody" id="tabbody"></div>`;
 
@@ -653,6 +670,8 @@ function renderModal(){
   M.querySelector('#m-exam').onchange = e=>{ st.examDate = e.target.value; save(false); };
   const ma = M.querySelector('#m-maects'); if(ma) ma.onchange = e=>{ state.maEcts = e.target.value; save(false); };
   M.querySelectorAll('.tab').forEach(b=>b.onclick = ()=>{ modalTab = b.dataset.tab; renderModal(); });
+  const adopt = M.querySelector('#m-adopt');
+  if(adopt) adopt.onclick = ()=>{ st.examDate = m.sched.ex; save(false); renderModal(); toast('Prüfungstermin übernommen.'); };
 
   const body = document.getElementById('tabbody');
   if(modalTab==='themen') renderTopics(m, body);
@@ -1230,6 +1249,7 @@ document.getElementById('file-import').addEventListener('change', e=>{
 document.getElementById('btn-ics').addEventListener('click', icsExport);
 document.getElementById('btn-folder').addEventListener('click', connectFolder);
 document.getElementById('btn-peer').addEventListener('click', ()=>openPeer());
+document.getElementById('btn-official').addEventListener('click', adoptOfficialDates);
 document.getElementById('learnbox-btn').addEventListener('click', ()=>startLearning(null));
 document.getElementById('start').addEventListener('change', e=>{ state.start = e.target.value; save(); });
 document.getElementById('search').addEventListener('input', e=>{ searchTerm = e.target.value.trim(); render(); });
