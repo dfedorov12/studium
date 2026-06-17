@@ -223,6 +223,20 @@ async function fsWriteNote(mid, text){
   await w.write(text); await w.close();
   return true;
 }
+async function fsReadModFile(mid, name){
+  const d = await modDir(mid);
+  if(!d) return null;
+  try{ return await (await (await d.getFileHandle(name)).getFile()).text(); }
+  catch(e){ return null; }
+}
+async function fsWriteModFile(mid, name, text){
+  const d = await modDir(mid, true);
+  if(!d) return false;
+  const fh = await d.getFileHandle(name, {create:true});
+  const w = await fh.createWritable();
+  await w.write(text); await w.close();
+  return true;
+}
 async function fsListFiles(mid){
   const d = await modDir(mid);
   if(!d) return [];
@@ -961,11 +975,12 @@ function renderCards(m, body){
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn primary small" id="fc-add">+ Karte anlegen</button>
         ${due?`<button class="btn small" id="fc-learn">▶ ${due} fällige Karte(n) lernen</button>`:''}
-        <button class="btn small" id="fc-import" title="JSON oder CSV (frage;antwort;falsch1;falsch2…)">⬆ Import</button>
-        ${cards.length?`<button class="btn small" id="fc-export">⬇ Export (JSON)</button>`:''}
+        <button class="btn small" id="fc-import" title="JSON oder CSV (frage;antwort;falsch1;falsch2…)">⬆ Import (Datei)</button>
+        ${cards.length?`<button class="btn small" id="fc-export">⬇ Export (Datei)</button>`:''}
+        ${dirHandle?`${cards.length?`<button class="btn small" id="fc-save">💾 → Ordner</button>`:''}<button class="btn small" id="fc-load">📂 Aus Ordner laden</button>`:''}
         <input type="file" id="fc-file" accept=".json,.csv,.txt,text/csv,application/json" style="display:none"/>
       </div>
-      <span style="font-size:.7rem;color:var(--mut)">Leitner: gewusst → nächste Box (1/3/7/14/30 Tage), nicht gewusst → zurück zu Box 1. Mit Falschantworten wird die Karte im Lern-Modus als Multiple Choice abgefragt — wie in der echten Prüfung.</span>
+      <span style="font-size:.7rem;color:var(--mut)">Leitner: gewusst → nächste Box (1/3/7/14/30 Tage), nicht gewusst → zurück zu Box 1. Mit Falschantworten wird die Karte im Lern-Modus als Multiple Choice abgefragt — wie in der echten Prüfung.${dirHandle?' · „💾 → Ordner" speichert diese Karten lesbar als '+esc(m.id)+'/lernkarten.json.':''}</span>
     </div>
     <div class="cardlist">${cards.length?'':'<div class="placeholder">Noch keine Lernkarten für dieses Modul.</div>'}</div>`;
   const list = body.querySelector('.cardlist');
@@ -1004,15 +1019,44 @@ function renderCards(m, body){
     if(!f) return;
     f.text().then(txt=>{
       try{
-        const parsed = parseCards(txt);
-        if(!parsed.length) throw new Error('keine Karten erkannt');
-        parsed.forEach(c=>state.cards.push({id:uid(), mod:m.id, q:c.q, a:c.a, choices:c.choices, box:1, due:today()}));
-        save(false); renderCards(m, body);
-        toast(parsed.length+' Karte(n) importiert. ✓');
+        const added = importCards(m.id, txt);
+        renderCards(m, body);
+        toast(added+' Karte(n) importiert. ✓');
       }catch(err){ toast('Import fehlgeschlagen: '+err.message); }
       e.target.value = '';
     });
   });
+  // Studienordner-Synchronisierung
+  const sv = body.querySelector('#fc-save');
+  if(sv) sv.onclick = async ()=>{
+    const data = cards.map(c=>({q:c.q, a:c.a, choices:c.choices||[]}));
+    const ok = await fsWriteModFile(m.id, 'lernkarten.json', JSON.stringify(data, null, 2));
+    toast(ok ? cards.length+' Karten → '+m.id+'/lernkarten.json gespeichert.' : 'Speichern fehlgeschlagen.');
+  };
+  const ld = body.querySelector('#fc-load');
+  if(ld) ld.onclick = async ()=>{
+    const txt = await fsReadModFile(m.id, 'lernkarten.json');
+    if(txt===null){ toast('Keine '+m.id+'/lernkarten.json im Ordner gefunden.'); return; }
+    try{
+      const added = importCards(m.id, txt);
+      renderCards(m, body);
+      toast(added+' Karte(n) aus dem Ordner geladen. ✓');
+    }catch(err){ toast('Laden fehlgeschlagen: '+err.message); }
+  };
+}
+/* Karten aus Text (JSON/CSV) ins Modul importieren — Duplikate (gleiche Frage) überspringen */
+function importCards(mid, txt){
+  const parsed = parseCards(txt);
+  if(!parsed.length) throw new Error('keine Karten erkannt');
+  const existing = new Set(state.cards.filter(c=>c.mod===mid).map(c=>c.q.trim().toLowerCase()));
+  let added = 0;
+  parsed.forEach(c=>{
+    if(existing.has(c.q.trim().toLowerCase())) return;
+    state.cards.push({id:uid(), mod:mid, q:c.q, a:c.a, choices:c.choices, box:1, due:today()});
+    existing.add(c.q.trim().toLowerCase()); added++;
+  });
+  save(false);
+  return added;
 }
 /* JSON ([{q,a,choices}] / [{frage,antwort,falsch}]) oder CSV (frage;antwort;falsch1;falsch2…) */
 function parseCards(txt){

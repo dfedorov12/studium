@@ -11,7 +11,7 @@ Persönliches Studien-Cockpit für den **MBA Informationssicherheit und IT-Risik
 - **Notizen:** Markdown-Editor mit Vorschau pro Modul
 - **Material:** Skripte/PDFs pro Modul ablegen & öffnen (Drag&Drop), gespeichert im lokalen Studienordner
 - **Projekte:** Modulprojektarbeiten & Vertiefungsprojekt als Workflows (Idee → … → Bewertet) mit To-dos und Deadlines — Vertiefungsprojekt mit den Bewertungskriterien aus dem Handbuch vorbefüllt
-- **Lernkarten:** eigener Fragenpool pro Modul mit Leitner-Spaced-Repetition (1/3/7/14/30 Tage), „heute fällig“-Widget, **MC-Quiz-Modus** (Falschantworten → Abfrage wie in der echten Prüfung) und **Import/Export** (JSON oder CSV `frage;antwort;falsch1;falsch2…`) — fertige Prompt-Vorlage zum Generieren aus Skripten: [PROMPT.md](PROMPT.md)
+- **Lernkarten:** eigener Fragenpool pro Modul mit Leitner-Spaced-Repetition (1/3/7/14/30 Tage), „heute fällig“-Widget, **MC-Quiz-Modus** (Falschantworten → Abfrage wie in der echten Prüfung) und **Import/Export** (JSON oder CSV `frage;antwort;falsch1;falsch2…`, duplikatsicher) — fertige Prompt-Vorlage zum Generieren aus Skripten: [PROMPT.md](PROMPT.md). Bei verbundenem Studienordner direkt als `<MODUL>/lernkarten.json` sichern/laden.
 - **Statistik:** Lern-Heatmap (26 Wochen, Themen/Karten/Projektschritte) + ECTS-Kurve gegen die Plan-Linie
 - **Offizielle Termine:** echte Unterrichts- und Prüfungstermine des Fachstudiums (WBS-Ablaufplan, Start 29.09.2026) sind **standardmäßig eingetragen** (Start + alle 8 Fachprüfungen, fließt direkt in ICS-Export & Wochenplaner); eigene Termine bleiben beim Update erhalten, Button „📅 Offizielle Termine“ setzt sie bei Bedarf zurück
 - **Vorlagen & Zitieren:** offizielle Word-Vorlage (.dotx) und APA-Zitierleitfaden als Download (Header „📎 Vorlagen“ und in jedem Projekt-Tab), dazu Formatvorgaben-Checkliste und APA7-Kurzreferenz
@@ -30,14 +30,18 @@ Persönliches Studien-Cockpit für den **MBA Informationssicherheit und IT-Risik
 
 ```
 studienordner/
-├── fortschritt.json     ← Autosave des kompletten Stands
+├── fortschritt.json     ← Autosave des kompletten Stands (inkl. ALLER Lernkarten,
+│                          Themen, Projekte, Literatur-Häkchen, PeerGroup …)
 ├── backups/             ← tägliche Sicherungspunkte (automatisch, letzte 10)
 │   └── fortschritt-2026-06-12.json
 ├── BPM1/
 │   ├── notizen.md       ← Markdown-Notizen (auch extern editierbar)
+│   ├── lernkarten.json  ← Karten dieses Moduls (💾 → Ordner / 📂 Aus Ordner laden)
 │   └── skript.pdf       ← Materialien (Drag&Drop in den Material-Tab)
 └── FM2/ …
 ```
+
+Der gesamte Stand liegt also im Studienordner — `fortschritt.json` ist die zentrale Datei (enthält auch alle Lernkarten). Pro Modul kommen optional `notizen.md`, `lernkarten.json` und Materialdateien dazu.
 
 Schreibkonflikt-Schutz: Ändert ein anderes Gerät die Datei zwischenzeitlich (OneDrive-Sync), fragt die App nach, statt still zu überschreiben.
 
