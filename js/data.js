@@ -13,7 +13,7 @@ const MODULES = [
   {id:'BPM1', phase:'basis', name:'Academic Research Skills', ects:6, exam:'2× Multiple Choice (je 50 %)', deps:[],
    tip:'Grundlage für alle anderen Module — zuerst abschließen!',
    topics:[
-     {g:'LV1 · Qualitative Forschungsmethodik (MC)', items:['Qualitative vs. quantitative Methodik','Literaturrecherche','Zitation','Methodenwahl & empirische Datenerhebung','Hypothesenbildung']},
+     {g:'LV1 · Qualitative Forschungsmethodik — Skript „Wiss. Arbeiten I" (MC)', items:['Thema & Titel der Arbeit festlegen','Forschungsfragen formulieren','Hypothese formulieren (Falsifizierbarkeit, Popper)','Wahl der Forschungsmethode','Zielsetzung formulieren','Vorgehensweise & Zeitplanung','Literaturrecherche durchführen (Suchbegriffe, Quellen wie KVK/Subito)','Literaturgattungen & Literaturbewertung','Zitation & Literaturverzeichnis','Werkzeuge: Literaturverwaltung, KI, Kollaborationstools','Gliederung & roter Faden','Forschungsmethoden: Theorie, Argumentation, Empirie','Fallstudien (inkl. im eigenen Unternehmen)','Forschungsethik: Fehlverhalten, Plagiat, Datenschutz','Wissenschaftliches Schreiben & inklusive Sprache','Abbildungen & Tabellen','Trends & lebenslanges Lernen']},
      {g:'LV2 · Statistische Methoden (MC)', items:['Erhebung quantitativer Daten','Skalen und Skalenniveaus','Deskriptive Statistik','Induktive Statistik','Wahrscheinlichkeitstheorie und -verteilung']}
    ]},
   {id:'BPM2', phase:'basis', name:'Unternehmensführung, Strategien & Innovationen', ects:6, exam:'3× MC (40 %) + Projektarbeit (60 %)', deps:[], projektarbeit:true,
