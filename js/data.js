@@ -114,6 +114,14 @@ const MILESTONES = [
 ];
 const PLAN_MONTHS = 24; // Ziel-Pace (verdichtet; Regelstudiendauer wäre 5 Semester)
 
+/* Gute wissenschaftliche Praxis — Checkliste vor der Abgabe */
+const GWP = [
+  'Interessenkonflikte deklarieren (z. B. wenn über die eigene Firma geschrieben wird)',
+  'Vier-Augen-Prinzip: Arbeit von jemandem gegenlesen lassen',
+  'Vor Abgabe selbst durch Plagiatssoftware prüfen (z. B. Turnitin, PlagScan)',
+  'Rohdaten & Belege archivieren (je nach Vorgabe 4–10 Jahre aufbewahren)'
+];
+
 /* Vorbefüllte Projekte je Modul */
 const DEFAULT_PROJECTS = {
   VP: {title:'Vertiefungsprojekt (Bericht + Präsentation)', todos:[
@@ -124,6 +132,7 @@ const DEFAULT_PROJECTS = {
     'Theorie ↔ Praxis kritisch reflektieren',
     'Regelmäßige Abstimmung mit Betreuer:in dokumentieren',
     'Seminararbeit (Bericht) schreiben',
+    ...GWP,
     'Abschlusspräsentation vorbereiten'
   ]},
   MA: {title:'Masterarbeit', todos:[
@@ -134,6 +143,7 @@ const DEFAULT_PROJECTS = {
     'Gliederung mit Betreuer:in abstimmen',
     'Rohfassung schreiben',
     'Überarbeitung & Lektorat',
+    ...GWP,
     'Abgabe + Abschlussprüfung/Defensio'
   ]}
 };

@@ -163,3 +163,11 @@ Im Tracker: Header **„📚 Literatur"** (Gesamtliste mit Lese-/Vorhanden-Häkc
 - **Formatvorgaben:** Arial 12 pt, Zeilenabstand 1,5, Blocksatz + automatische Silbentrennung; Verzeichnisse römisch, Textteil arabisch, ab Literaturverzeichnis römisch fortführen; Literaturverzeichnis alphabetisch.
 - **APA-Zitierleitfaden** (Stand 20.03.2026, APA7): Kurz-/Vollbeleg für Monographie, Sammelband, Journal, Website, KI/ChatGPT, Gesetze u. a.
 - Im Tracker: Header **„📎 Vorlagen"** (Downloads + Formatcheckliste + APA7-Kurzreferenz) und als Vorlagen-Leiste in **jedem Projekt-Tab** (für alle aktuellen und künftigen Projektarbeiten).
+
+**Gute wissenschaftliche Praxis (vor jeder Abgabe):**
+- Interessenkonflikte deklarieren (für dich besonders relevant, wenn das Vertiefungsprojekt über DIHAG läuft).
+- Vier-Augen-Prinzip: Arbeit gegenlesen lassen.
+- Vor Abgabe selbst durch Plagiatssoftware prüfen (z. B. Turnitin, PlagScan).
+- Rohdaten & Belege archivieren (je nach Vorgabe 4–10 Jahre).
+
+Im Tracker als Abgabe-Checkliste in den Projekt-Vorlagen vorbefüllt (Modulprojektarbeiten, Vertiefungsprojekt, Masterarbeit) und per Button „🛡️ Abgabe-Checkliste" an jedes Projekt anhängbar.

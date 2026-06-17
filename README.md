@@ -15,6 +15,7 @@ Persönliches Studien-Cockpit für den **MBA Informationssicherheit und IT-Risik
 - **Statistik:** Lern-Heatmap (26 Wochen, Themen/Karten/Projektschritte) + ECTS-Kurve gegen die Plan-Linie
 - **Offizielle Termine:** echte Unterrichts- und Prüfungstermine des Fachstudiums (WBS-Ablaufplan, Start 29.09.2026) sind **standardmäßig eingetragen** (Start + alle 8 Fachprüfungen, fließt direkt in ICS-Export & Wochenplaner); eigene Termine bleiben beim Update erhalten, Button „📅 Offizielle Termine“ setzt sie bei Bedarf zurück
 - **Vorlagen & Zitieren:** offizielle Word-Vorlage (.dotx) und APA-Zitierleitfaden als Download (Header „📎 Vorlagen“ und in jedem Projekt-Tab), dazu Formatvorgaben-Checkliste und APA7-Kurzreferenz
+- **Gute wissenschaftliche Praxis:** Abgabe-Checkliste (Plagiatscheck, Vier-Augen-Prinzip, Interessenkonflikt-Deklaration, Rohdaten-Archivierung) — in den Projekt-Vorlagen vorbefüllt, per Button an jedes Projekt anhängbar, als Referenz im Vorlagen-Bereich
 - **Literatur:** offizielle Literaturliste (Stand 23.09.2025 — eBooks der HBW-Bibliothek mit ISBN + Normen im WBS eCampus) global über „📚 Literatur“ und modulbezogen im Literatur-Tab (synchrones „gelesen/vorhanden“-Häkchen); dazu Handbuch-Empfehlungen pro Modul + eigene Quellen
 - **Wochenplaner „Diese Woche“:** automatisch aus Meilensteinen, laufenden Modulen, fälligen Karten, Prüfungen, Abgaben und PeerGroup-Terminen (14-Tage-Blick)
 - **PeerGroup-Bereich:** Kontakte, Gruppentermine (fließen in ICS + Wochenplaner) und Gruppenaufgaben — Gruppenarbeiten zählen 40 % jeder Fachmodul-Note

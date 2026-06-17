@@ -24,6 +24,7 @@ function defaultState(){
       {t:'Gliederung erstellen', done:false},
       {t:'Schreiben', done:false},
       {t:'Review: Zitation / gendergerechte Sprache prüfen', done:false},
+      ...GWP.map(t=>({t, done:false})),
       {t:'Abgeben', done:false}
     ]}];
   });
@@ -923,6 +924,19 @@ function renderProjects(m, body){
     };
     el.querySelector('.paddrow button').onclick = add;
     addInput.addEventListener('keydown', e=>{ if(e.key==='Enter') add(); });
+    // GWP-Abgabe-Checkliste anhängen (nur fehlende), wenn nicht schon vorhanden
+    if(!GWP.every(g=>p.todos.some(t=>t.t===g))){
+      const gwpBtn = document.createElement('button');
+      gwpBtn.className = 'btn small';
+      gwpBtn.style.marginTop = '8px';
+      gwpBtn.textContent = '🛡️ Abgabe-Checkliste (gute wiss. Praxis)';
+      gwpBtn.title = 'Plagiatscheck, Vier-Augen-Prinzip, Interessenkonflikt, Rohdaten-Archivierung als To-dos anhängen';
+      gwpBtn.onclick = ()=>{
+        GWP.forEach(g=>{ if(!p.todos.some(t=>t.t===g)) p.todos.push({t:g, done:false}); });
+        save(false); renderProjects(m, body);
+      };
+      el.appendChild(gwpBtn);
+    }
     body.appendChild(el);
   });
   const newBtn = document.createElement('button');
@@ -1107,9 +1121,11 @@ function openVorlagen(){
       </div>
       <h4 style="font-size:.78rem;font-weight:700;margin:16px 0 6px">📐 Formatvorgaben (Word-Vorlage)</h4>
       <div class="ptodos">${TEMPLATE_FORMAT.map(f=>`<div style="font-size:.78rem;display:flex;gap:7px"><span>•</span><span>${esc(f)}</span></div>`).join('')}</div>
+      <h4 style="font-size:.78rem;font-weight:700;margin:16px 0 6px">🛡️ Gute wissenschaftliche Praxis (vor Abgabe)</h4>
+      <div class="ptodos">${GWP.map(g=>`<div style="font-size:.78rem;display:flex;gap:7px"><span>•</span><span>${esc(g)}</span></div>`).join('')}</div>
       <h4 style="font-size:.78rem;font-weight:700;margin:16px 0 6px">📑 APA7-Kurzreferenz</h4>
       <table class="apa">${APA_CHEAT.map(c=>`<tr><td>${esc(c.k)}</td><td><code>${esc(c.v)}</code></td></tr>`).join('')}</table>
-      <div class="placeholder">Vollständige Regeln im APA-Leitfaden (Download oben). Diese Vorlagen sind auch in jedem Projekt-Tab verlinkt.</div>
+      <div class="placeholder">Vollständige Regeln im APA-Leitfaden (Download oben). Vorlagen & Abgabe-Checkliste sind auch in jedem Projekt-Tab verfügbar.</div>
     </div>`;
   document.querySelector('#modal .x').onclick = closeModal;
 }
