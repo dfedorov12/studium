@@ -204,9 +204,11 @@ table.apa code{font-size:.72rem;background:none}
 .mcopts{display:flex;flex-direction:column;gap:7px;margin-top:16px;text-align:left}
 .mcopt{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:9px 13px;font-size:.82rem;cursor:pointer;text-align:left;color:var(--ink)}
 .mcopt:hover:not(:disabled){border-color:var(--blue)}
+.mcopt.sel{border-color:var(--blue);background:var(--blue-soft);font-weight:600}
 .mcopt.right{border-color:var(--ok);background:var(--ok-soft);color:var(--ok);font-weight:700}
 .mcopt.wrong{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
 .mcopt:disabled{cursor:default}
+.mchint{font-size:.72rem;color:var(--mut);margin-top:10px;font-weight:600}
 
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;border-radius:9px;padding:9px 16px;font-size:.78rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;z-index:99}
 .toast.show{opacity:1}

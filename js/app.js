@@ -1006,7 +1006,9 @@ function renderCards(m, body){
   if(lb) lb.onclick = ()=>startLearning(m.id);
   const ex = body.querySelector('#fc-export');
   if(ex) ex.onclick = ()=>{
-    const data = cards.map(c=>({q:c.q, a:c.a, choices:c.choices||[]}));
+    const data = cards.map(c=> c.correct&&c.correct.length>1
+      ? {q:c.q, correct:c.correct, choices:c.choices||[]}
+      : {q:c.q, a:c.a, choices:c.choices||[]});
     const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -1052,23 +1054,30 @@ function importCards(mid, txt){
   let added = 0;
   parsed.forEach(c=>{
     if(existing.has(c.q.trim().toLowerCase())) return;
-    state.cards.push({id:uid(), mod:mid, q:c.q, a:c.a, choices:c.choices, box:1, due:today()});
+    const card = {id:uid(), mod:mid, q:c.q, a:c.a, choices:c.choices, box:1, due:today()};
+    if(c.correct && c.correct.length>1) card.correct = c.correct;
+    state.cards.push(card);
     existing.add(c.q.trim().toLowerCase()); added++;
   });
   save(false);
   return added;
 }
-/* JSON ([{q,a,choices}] / [{frage,antwort,falsch}]) oder CSV (frage;antwort;falsch1;falsch2…) */
+/* JSON ([{q,a,choices}] · [{q,correct:[…],choices}] für Mehrfachauswahl) oder CSV (frage;antwort;falsch1;…) */
 function parseCards(txt){
   txt = txt.replace(/^﻿/,'').trim();
   if(txt.startsWith('[') || txt.startsWith('{')){
     const data = JSON.parse(txt);
     const list = Array.isArray(data) ? data : (data.cards||[]);
-    return list.map(c=>({
-      q:String(c.q??c.frage??'').trim(),
-      a:String(c.a??c.antwort??'').trim(),
-      choices:(c.choices??c.falsch??[]).map(x=>String(x).trim()).filter(Boolean)
-    })).filter(c=>c.q && c.a);
+    return list.map(c=>{
+      const corrRaw = c.correct ?? c.answers ?? c.richtig;
+      const corr = Array.isArray(corrRaw) ? corrRaw.map(x=>String(x).trim()).filter(Boolean) : null;
+      return {
+        q:String(c.q??c.frage??'').trim(),
+        a: (corr && corr.length) ? corr[0] : String(c.a??c.antwort??'').trim(),
+        correct: (corr && corr.length>1) ? corr : null,
+        choices:(c.choices??c.falsch??[]).map(x=>String(x).trim()).filter(Boolean)
+      };
+    }).filter(c=>c.q && (c.a || (c.correct && c.correct.length)));
   }
   return txt.split(/\r?\n/)
     .map(l=>l.split(';').map(x=>x.trim()))
@@ -1087,7 +1096,7 @@ function startLearning(mid){
   overlay.classList.add('open');
   const draw = ()=>{
     if(i>=queue.length){
-      queue.forEach(q=>{ delete q._opts; delete q._picked; });
+      queue.forEach(q=>{ delete q._opts; delete q._picked; delete q._sel; });
       document.getElementById('modal').innerHTML = `
         <div class="mhead"><h3>Fertig für heute 🎉</h3><button class="x">✕</button></div>
         <div class="tabbody"><div class="placeholder">${queue.length} Karte(n) gelernt. Die nächsten Wiederholungen stehen im Dashboard.</div></div>`;
@@ -1096,48 +1105,71 @@ function startLearning(mid){
       return;
     }
     const c = queue[i];
+    const correctArr = (c.correct && c.correct.length) ? c.correct : ((c.a!==undefined && c.a!=='') ? [c.a] : []);
+    const correctSet = new Set(correctArr);
     const isMC = c.choices && c.choices.length;
-    if(isMC && !c._opts) c._opts = [c.a, ...c.choices].sort(()=>Math.random()-.5);
+    const isMulti = correctArr.length > 1;
+    if(isMC && !c._opts) c._opts = [...correctArr, ...c.choices].sort(()=>Math.random()-.5);
+    if(isMulti && !c._sel) c._sel = [];
     const grade = ok=>{
       if(ok){ c.box = Math.min(5, c.box+1); c.due = addDays(today(), LEITNER[c.box]); }
       else { c.box = 1; c.due = addDays(today(), 1); }
       logEvent('c');
     };
+    const optHtml = (o,oi)=>{
+      let cls = '';
+      if(revealed) cls = correctSet.has(o) ? ' right' : ((isMulti?c._sel.includes(oi):oi===c._picked) ? ' wrong' : '');
+      else if(isMulti && c._sel.includes(oi)) cls = ' sel';
+      return `<button class="mcopt${cls}" data-oi="${oi}" ${revealed?'disabled':''}>${esc(o)}</button>`;
+    };
+    const tag = isMulti ? ' · Mehrfachauswahl' : (isMC ? ' · Multiple Choice' : '');
     document.getElementById('modal').innerHTML = `
       <div class="mhead"><h3>Lernen · ${esc(c.mod)} (${i+1}/${queue.length})</h3><button class="x">✕</button></div>
       <div class="tabbody">
         <div class="learncard">
-          <div class="lmeta">Box ${c.box} · ${esc(MODULES.find(m=>m.id===c.mod)?.name||'')}${isMC?' · Multiple Choice':''}</div>
+          <div class="lmeta">Box ${c.box} · ${esc(MODULES.find(m=>m.id===c.mod)?.name||'')}${tag}</div>
           <div class="lq">${esc(c.q)}</div>
+          ${isMulti && !revealed ? `<div class="mchint">Alle zutreffenden Antworten auswählen</div>` : ''}
           ${isMC
-            ? `<div class="mcopts">${c._opts.map((o,oi)=>{
-                let cls = '';
-                if(revealed) cls = o===c.a ? ' right' : (oi===c._picked ? ' wrong' : '');
-                return `<button class="mcopt${cls}" data-oi="${oi}" ${revealed?'disabled':''}>${esc(o)}</button>`;
-              }).join('')}</div>`
+            ? `<div class="mcopts">${c._opts.map(optHtml).join('')}</div>`
             : (revealed?`<div class="la">${esc(c.a)}</div>`:'')}
         </div>
         <div class="learnbtns">
           ${isMC
-            ? (revealed?`<button class="btn primary" id="l-next">Weiter →</button>`:'')
+            ? (revealed
+                ? `<button class="btn primary" id="l-next">Weiter →</button>`
+                : (isMulti ? `<button class="btn primary" id="l-check">Antwort prüfen</button>` : ''))
             : (revealed
                 ? `<button class="btn small danger" id="l-no">✗ Nicht gewusst</button><button class="btn primary small" id="l-yes">✓ Gewusst</button>`
                 : `<button class="btn primary" id="l-show">Antwort zeigen</button>`)}
         </div>
       </div>`;
     document.querySelector('#modal .x').onclick = ()=>{
-      queue.forEach(q=>{ delete q._opts; delete q._picked; });
+      queue.forEach(q=>{ delete q._opts; delete q._picked; delete q._sel; });
       save(false); closeModal();
     };
     if(isMC && !revealed){
       document.querySelectorAll('.mcopt').forEach(b=>b.onclick = ()=>{
-        c._picked = Number(b.dataset.oi);
-        grade(c._opts[c._picked]===c.a);
-        revealed = true; draw();
+        const oi = Number(b.dataset.oi);
+        if(isMulti){
+          const p = c._sel.indexOf(oi);
+          if(p>=0) c._sel.splice(p,1); else c._sel.push(oi);
+          draw(); // Auswahl aktualisieren
+        } else {
+          c._picked = oi;
+          grade(c._opts[oi]===correctArr[0]);
+          revealed = true; draw();
+        }
       });
     }
+    const chk = document.getElementById('l-check');
+    if(chk) chk.onclick = ()=>{
+      const sel = c._sel.map(idx=>c._opts[idx]);
+      const ok = sel.length===correctArr.length && sel.every(t=>correctSet.has(t));
+      grade(ok); revealed = true; draw();
+    };
     const next = document.getElementById('l-next');
-    if(next) next.onclick = ()=>{ delete c._opts; delete c._picked; i++; revealed = false; draw(); };
+    if(next) next.onclick = ()=>{ delete c._opts; delete c._picked; delete c._sel; i++; revealed = false; draw(); };
     const show = document.getElementById('l-show');
     if(show) show.onclick = ()=>{ revealed = true; draw(); };
     const yes = document.getElementById('l-yes');
