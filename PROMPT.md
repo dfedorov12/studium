@@ -41,6 +41,8 @@ exakt in diesem Format:
 
 ## Varianten
 
+**Mehrfachauswahl** („Alle zutreffenden auswählen", mehrere richtige Antworten): statt `"a"` ein Array `"correct"` mit allen richtigen Antworten verwenden, `"choices"` bleibt die Liste der falschen. Format: `[{"q": "…", "correct": ["Richtig 1", "Richtig 2"], "choices": ["Falsch 1", "Falsch 2"]}]`. Im Lern-Modus erscheinen dann Auswahlfelder; nur die exakt richtige Auswahl gilt als bestanden. Tipp für den Prompt: „Etwa 30 % der Fragen als Mehrfachauswahl mit 2–3 richtigen Antworten gestalten."
+
 **Klassische Karten ohne MC** (Frage → Antwort aufdecken): im Prompt `"choices"` weglassen lassen — Format dann `[{"q": "…", "a": "…"}]`.
 
 **CSV statt JSON** (z. B. zum Nachbearbeiten in Excel): Format `frage;antwort;falsch1;falsch2;falsch3` — eine Karte pro Zeile, Semikolon-getrennt, keine Kopfzeile nötig. Der Import erkennt beides automatisch.
