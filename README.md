@@ -19,6 +19,8 @@ Persönliches Studien-Cockpit für den **MBA Informationssicherheit und IT-Risik
 - **Literatur:** offizielle Literaturliste (Stand 23.09.2025 — eBooks der HBW-Bibliothek mit ISBN + Normen im WBS eCampus) global über „📚 Literatur“ und modulbezogen im Literatur-Tab (synchrones „gelesen/vorhanden“-Häkchen); dazu Handbuch-Empfehlungen pro Modul + eigene Quellen
 - **Wochenplaner „Diese Woche“:** automatisch aus Meilensteinen, laufenden Modulen, fälligen Karten, Prüfungen, Abgaben und PeerGroup-Terminen (14-Tage-Blick)
 - **PeerGroup-Bereich:** Kontakte, Gruppentermine (fließen in ICS + Wochenplaner) und Gruppenaufgaben — Gruppenarbeiten zählen 40 % jeder Fachmodul-Note
+- **LV-Prüfungen mit Noten:** Basismodule (BPM/BWM) haben je LV eine eigene Online-Prüfung — Note + Datum pro LV im Tab „LV-Prüfungen“; die Modulnote wird daraus **gewichtet** berechnet (lt. Handbuch, z. B. 50/50 bzw. 20/20/60)
+- **Wochenplaner „Diese Woche“:** Einträge einzeln per ✕ ausblendbar (tagesweise, „↺ wieder anzeigen“)
 - **Meilensteine M1–M24** mit Zielterminen ab Studienstart + „Bin ich im Plan?“-Indikator
 - **📅 ICS-Export:** Meilensteine, Prüfungstermine, Projekt-Deadlines und PeerGroup-Termine für Outlook
 - **PWA:** installierbar, offline nutzbar · **Dark Mode**

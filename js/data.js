@@ -11,34 +11,40 @@ const PHASES = [
 /* topics: gruppiert nach LV/Themengebiet — Quelle: Lehrinhalte im Handbuch */
 const MODULES = [
   {id:'BPM1', phase:'basis', name:'Academic Research Skills', ects:6, exam:'2× Multiple Choice (je 50 %)', deps:[],
+   lvs:[{n:'LV1 · Qualitative Forschungsmethodik',w:50,typ:'MC'},{n:'LV2 · Statistische Methoden',w:50,typ:'MC'}],
    tip:'Grundlage für alle anderen Module — zuerst abschließen!',
    topics:[
      {g:'LV1 · Qualitative Forschungsmethodik — Skript „Wiss. Arbeiten I" (MC)', items:['Thema & Titel der Arbeit festlegen','Forschungsfragen formulieren','Hypothese formulieren (Falsifizierbarkeit, Popper)','Wahl der Forschungsmethode','Zielsetzung formulieren','Vorgehensweise & Zeitplanung','Literaturrecherche durchführen (Suchbegriffe, Quellen wie KVK/Subito)','Literaturgattungen & Literaturbewertung','Zitation & Literaturverzeichnis','Werkzeuge: Literaturverwaltung, KI, Kollaborationstools','Gliederung & roter Faden','Forschungsmethoden: Theorie, Argumentation, Empirie','Fallstudien (inkl. im eigenen Unternehmen)','Forschungsethik: Fehlverhalten, Plagiat, Datenschutz','Wissenschaftliches Schreiben & inklusive Sprache','Abbildungen & Tabellen','Trends & lebenslanges Lernen']},
      {g:'LV2 · Statistische Methoden (MC)', items:['Erhebung quantitativer Daten','Skalen und Skalenniveaus','Deskriptive Statistik','Induktive Statistik','Wahrscheinlichkeitstheorie und -verteilung']}
    ]},
   {id:'BPM2', phase:'basis', name:'Unternehmensführung, Strategien & Innovationen', ects:6, exam:'3× MC (40 %) + Projektarbeit (60 %)', deps:[], projektarbeit:true,
+   lvs:[{n:'LV1 · Unternehmensführung & Entrepreneurship',w:13,typ:'MC'},{n:'LV2 · Strategisches Management',w:13,typ:'MC'},{n:'LV3 · Digitales Innovationsmanagement',w:14,typ:'MC'},{n:'LV4 · Modulprojektarbeit',w:60,typ:'Projektarbeit'}],
    topics:[
      {g:'LV1 · Unternehmensführung & Entrepreneurship (MC)', items:['Grundlagen der Unternehmensführung','Instrumente der Unternehmensführung','Strategie, Struktur und Kultur','Organisation','Controlling und Budgetierung']},
      {g:'LV2 · Strategisches Management (MC)', items:['Globales strategisches Management','Branchen-, Umfeld- & Wettbewerbsanalysen','Stakeholder-Analyse','Five Forces','SWOT-Analyse']},
      {g:'LV3 · Digitales Innovationsmanagement (MC)', items:['Digitale Technologien (IoT, Big Data, KI …)','Digitale Transformation','Innovationsstrategie mit neuen Technologien','Innovationskultur','Innovationskompetenz / Fail-Fast']}
    ]},
   {id:'BPM3', phase:'basis', name:'Kommunikation und Change', ects:6, exam:'2× MC (je 20 %) + Projektarbeit (60 %)', deps:[], projektarbeit:true,
+   lvs:[{n:'LV1 · Leadership & Kommunikation',w:20,typ:'MC'},{n:'LV2 · Kommunikation von Veränderungsprozessen',w:20,typ:'MC'},{n:'LV3 · Modulprojektarbeit',w:60,typ:'Projektarbeit'}],
    topics:[
      {g:'LV1 · Leadership & Kommunikation (MC)', items:['Führungskommunikation und -modelle','Frage- und Zuhörtechniken','Ich- und Du-Botschaften','Körpersprache','Verhandlungsführung']},
      {g:'LV2 · Kommunikation von Veränderungsprozessen (MC)', items:['Gründe & Ziele der Change-Kommunikation','Kommunikationsaspekte im 8-Stufen-Modell','Interne vs. externe Kommunikation','Management von Emotionen','Medien & Methoden, 5-Schritte-Planungsprozess']}
    ]},
   {id:'BPM4', phase:'basis', name:'Kompetenzen im Projektmanagement', ects:6, exam:'2× MC (je 20 %) + Projektarbeit (60 %)', deps:[], projektarbeit:true,
+   lvs:[{n:'LV1 · Projektdesign',w:20,typ:'MC'},{n:'LV2 · Planung & Steuerung von Projekten',w:20,typ:'MC'},{n:'LV3 · Modulprojektarbeit',w:60,typ:'Projektarbeit'}],
    topics:[
      {g:'LV1 · Projektdesign (MC)', items:['Projektwürdigkeitsanalyse','Projektskizze','Anforderungen & Ziele im PM','Leistungsumfang & Lieferobjekte','Projektorganisation','Balkenterminplan']},
      {g:'LV2 · Planung & Steuerung von Projekten (MC)', items:['Six Sigma, Kaizen, Lean Management','Projekt-Controlling','IT zur Projektunterstützung','Berichterstattung & Problemreport','Risikomanagement & Risikokennzahlen']}
    ]},
   {id:'BWM1', phase:'basis', name:'Digitalisierung von Geschäftsmodellen', ects:6, exam:'2× MC (je 20 %) + Projektarbeit (60 %)', deps:[], wahl:true, projektarbeit:true,
+   lvs:[{n:'LV1 · Entwicklung von Geschäftsmodellen',w:20,typ:'MC'},{n:'LV2 · Digitale Geschäftsmodelle',w:20,typ:'MC'},{n:'LV3 · Modulprojektarbeit',w:60,typ:'Projektarbeit'}],
    tip:'Empfohlenes Wahlmodul — näher am IT-/Security-Profil.',
    topics:[
      {g:'LV1 · Entwicklung von Geschäftsmodellen (MC)', items:['Elemente von Geschäftsmodellen','Erfolgsfaktoren der Geschäftsmodellentwicklung','Typologie nachhaltiger Geschäftsmodelle','Business-Plan','Bewertung von Geschäftsmodellen','Pipeline- vs. Plattform-Modelle']},
      {g:'LV2 · Digitale Geschäftsmodelle (MC)', items:['Elemente digitaler Geschäftsmodelle','Vorgehensmodell für neue digitale Geschäftsmodelle','Erfolgsfaktoren digitaler Geschäftsmodelle','Reifegradmodelle der Digitalisierung','Trend- und Risikobewertung']}
    ]},
   {id:'BWM2', phase:'basis', name:'Interkulturalität & Digital Leadership', ects:6, exam:'2× MC (je 20 %) + Projektarbeit (60 %)', deps:[], wahl:true, projektarbeit:true,
+   lvs:[{n:'LV1 · Interkulturelles Management',w:20,typ:'MC'},{n:'LV2 · Digital Leadership',w:20,typ:'MC'},{n:'LV3 · Modulprojektarbeit',w:60,typ:'Projektarbeit'}],
    topics:[
      {g:'LV1 · Interkulturelles Management (MC)', items:['Kultur, Transkultur, Interkulturalität','Kultureinfluss auf Management & Führung','Internationale Teams & Teamprozesse','Interkulturelles Konfliktmanagement','Interkulturelle Personalarbeit (Training, Coaching)']},
      {g:'LV2 · Digital Leadership (MC)', items:['Digitalisierung & Führung','Elemente des Digital Leadership','Arbeitswelt 4.0 / New Work','Führung digitaler Teams','Digitaler Kulturwandel']}

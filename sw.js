@@ -1,6 +1,6 @@
 'use strict';
-const VERSION = 'mba-v15';
-const SHELL = ['.', 'index.html', 'css/style.css?v=15', 'js/data.js?v=15', 'js/app.js?v=15', 'manifest.webmanifest', 'icon.svg'];
+const VERSION = 'mba-v16';
+const SHELL = ['.', 'index.html', 'css/style.css?v=16', 'js/data.js?v=16', 'js/app.js?v=16', 'manifest.webmanifest', 'icon.svg'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));

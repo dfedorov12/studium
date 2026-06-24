@@ -6,9 +6,9 @@ const THEME_KEY = 'mba-theme';
 function defaultState(){
   const s = {v:2, savedAt:'', start:FACHSTUDIUM_START, maEcts:'', lastBackup:'',
     wahl:{BWM1:true, BWM2:false}, modules:{}, miles:{}, topics:{}, notes:{}, projects:{}, cards:[],
-    lit:{}, litList:{}, peer:{contacts:[], meetings:[], tasks:[]}, log:{}, ectsLog:[]};
+    lit:{}, litList:{}, peer:{contacts:[], meetings:[], tasks:[]}, log:{}, ectsLog:[], weekDismissed:{}};
   MODULES.forEach(m=>{
-    s.modules[m.id] = {status:'offen', grade:'', date:'', examDate:m.sched?m.sched.ex:'', notes:''};
+    s.modules[m.id] = {status:'offen', grade:'', date:'', examDate:m.sched?m.sched.ex:'', notes:'', lvg:{}};
     s.topics[m.id] = {};
     s.projects[m.id] = [];
     s.lit[m.id] = {read:{}, own:[]};
@@ -48,11 +48,13 @@ function migrate(data){
   s.litList = data.litList || {};
   s.log = data.log || {};
   s.ectsLog = Array.isArray(data.ectsLog) ? data.ectsLog : [];
+  s.weekDismissed = data.weekDismissed || {};
   // v1 → v2: LV-Checkboxen entfallen (ersetzt durch Themenbaum); fehlende Modul-Felder auffüllen
   if(!s.start) s.start = FACHSTUDIUM_START;
   MODULES.forEach(m=>{
-    s.modules[m.id] = Object.assign({status:'offen',grade:'',date:'',examDate:'',notes:''}, s.modules[m.id]||{});
+    s.modules[m.id] = Object.assign({status:'offen',grade:'',date:'',examDate:'',notes:'',lvg:{}}, s.modules[m.id]||{});
     delete s.modules[m.id].lv;
+    if(!s.modules[m.id].lvg) s.modules[m.id].lvg = {};
     // Offizielle Prüfungstermine standardmäßig eintragen (nur wenn leer)
     if(m.sched && !s.modules[m.id].examDate) s.modules[m.id].examDate = m.sched.ex;
     if(!s.topics[m.id]) s.topics[m.id] = {};
@@ -510,7 +512,7 @@ function renderWeek(){
   if(state.start){
     const month = monthsElapsed()+1; // aktueller Studienmonat (1-basiert)
     MILESTONES.forEach((ms,i)=>{
-      if(!state.miles[i] && ms.mm < month) items.push({i:'⚠️', t:`Überfällig (${ms.m}): ${ms.t}`});
+      if(!state.miles[i] && ms.mm < month) items.push({key:'ms'+i, i:'⚠️', t:`Überfällig (${ms.m}): ${ms.t}`});
     });
     const ni = MILESTONES.findIndex((ms,i)=>!state.miles[i] && ms.mm >= month);
     if(ni>=0){
@@ -519,51 +521,76 @@ function renderWeek(){
         const m = MODULES.find(x=>x.id===id);
         return m && isActive(m) && state.modules[id].status!=='bestanden';
       });
-      items.push({i:'🎯', t:`Nächster Meilenstein ${ms.m} (${fmtMonth(ms.mm)}): ${ms.t}`+(open.length?` — dran: ${open.join(', ')}`:''), mod:open[0]});
+      items.push({key:'msnext'+ni, i:'🎯', t:`Nächster Meilenstein ${ms.m} (${fmtMonth(ms.mm)}): ${ms.t}`+(open.length?` — dran: ${open.join(', ')}`:''), mod:open[0]});
     }
   } else {
-    items.push({i:'💡', t:'Studienstart setzen — dann plane ich dir die Woche.'});
+    items.push({key:'setstart', i:'💡', t:'Studienstart setzen — dann plane ich dir die Woche.'});
   }
 
   // Laufende Module mit offenen Themen
   MODULES.filter(m=>isActive(m) && state.modules[m.id].status==='laufend').forEach(m=>{
     const ts = topicStat(m);
     const open = ts.total - ts.t2;
-    items.push({i:'📖', t:`Weiter an ${m.id} — ${ts.total ? open+' Themen noch nicht „sitzt“' : 'in Arbeit'}`, mod:m.id});
+    items.push({key:'mod'+m.id, i:'📖', t:`Weiter an ${m.id} — ${ts.total ? open+' Themen noch nicht „sitzt“' : 'in Arbeit'}`, mod:m.id});
   });
 
   // Fällige Lernkarten
   const due = dueCards().length;
-  if(due) items.push({i:'🃏', t:`${due} Lernkarte(n) fällig`, learn:true});
+  if(due) items.push({key:'cards', i:'🃏', t:`${due} Lernkarte(n) fällig`, learn:true});
 
   // Prüfungen & Abgaben in den nächsten 14 Tagen
   MODULES.forEach(m=>{
     const ed = state.modules[m.id].examDate;
-    if(ed && ed>=today() && ed<=soon) items.push({i:'📝', t:`Prüfung ${m.id} am ${fmtDate(ed)}`, mod:m.id});
+    if(ed && ed>=today() && ed<=soon) items.push({key:'exam'+m.id, i:'📝', t:`Prüfung ${m.id} am ${fmtDate(ed)}`, mod:m.id});
     (state.projects[m.id]||[]).forEach(p=>{
       if(p.deadline && p.deadline>=today() && p.deadline<=soon && p.status!=='Abgegeben' && p.status!=='Bewertet')
-        items.push({i:'📋', t:`Abgabe „${p.title}“ am ${fmtDate(p.deadline)}`, mod:m.id, tab:'projekte'});
+        items.push({key:'proj'+p.id, i:'📋', t:`Abgabe „${p.title}“ am ${fmtDate(p.deadline)}`, mod:m.id, tab:'projekte'});
     });
   });
 
   // PeerGroup-Termine
-  (state.peer.meetings||[]).forEach(mt=>{
-    if(mt.date && mt.date>=today() && mt.date<=soon) items.push({i:'👥', t:`PeerGroup: ${mt.topic||'Termin'} am ${fmtDate(mt.date)}`, peer:true});
+  (state.peer.meetings||[]).forEach((mt,idx)=>{
+    if(mt.date && mt.date>=today() && mt.date<=soon) items.push({key:'peer'+idx+mt.date, i:'👥', t:`PeerGroup: ${mt.topic||'Termin'} am ${fmtDate(mt.date)}`, peer:true});
   });
 
-  el.innerHTML = items.length ? '' : '<div class="mile"><span class="t" style="color:var(--mut)">Nichts Dringendes — gönn dir was. 🎉</span></div>';
-  items.slice(0,8).forEach(it=>{
+  // Heute ausgeblendete Einträge herausfiltern (Dismiss gilt tagesweise)
+  const td = today();
+  const visible = items.filter(it=>!state.weekDismissed[td+'|'+it.key]);
+  const hiddenCount = items.length - visible.length;
+
+  el.innerHTML = '';
+  if(!visible.length){
+    el.innerHTML = `<div class="mile"><span class="t" style="color:var(--mut)">${items.length?'Alle Einträge für heute ausgeblendet.':'Nichts Dringendes — gönn dir was. 🎉'}</span></div>`;
+  }
+  visible.slice(0,8).forEach(it=>{
     const row = document.createElement('div');
     row.className = 'mile';
-    if(it.mod || it.learn || it.peer) row.style.cursor = 'pointer';
-    row.innerHTML = `<span style="flex:none">${it.i}</span><span class="t">${esc(it.t)}</span>`;
-    row.onclick = ()=>{
+    const clickable = it.mod || it.learn || it.peer;
+    row.innerHTML = `<span style="flex:none">${it.i}</span><span class="t"${clickable?' style="cursor:pointer"':''}>${esc(it.t)}</span><button class="wk-x" title="Für heute ausblenden">✕</button>`;
+    if(clickable) row.querySelector('.t').onclick = ()=>{
       if(it.learn) startLearning(null);
       else if(it.peer) openPeer();
       else if(it.mod) openModal(it.mod, it.tab);
     };
+    row.querySelector('.wk-x').onclick = (e)=>{
+      e.stopPropagation();
+      state.weekDismissed[td+'|'+it.key] = true;
+      save();
+    };
     el.appendChild(row);
   });
+  if(hiddenCount>0){
+    const restore = document.createElement('div');
+    restore.className = 'mile';
+    restore.innerHTML = `<span class="t" style="color:var(--mut);font-size:.74rem">${hiddenCount} ausgeblendet</span><button class="btn small" id="wk-restore">↺ wieder anzeigen</button>`;
+    restore.querySelector('#wk-restore').onclick = ()=>{
+      Object.keys(state.weekDismissed).filter(k=>k.startsWith(td+'|')).forEach(k=>delete state.weekDismissed[k]);
+      save();
+    };
+    el.appendChild(restore);
+  }
+  // Alte (nicht-heutige) Dismiss-Einträge aufräumen
+  Object.keys(state.weekDismissed).forEach(k=>{ if(!k.startsWith(td+'|')) delete state.weekDismissed[k]; });
 }
 function matchesSearch(m){
   if(!searchTerm) return true;
@@ -657,6 +684,7 @@ function renderModal(){
   const st = state.modules[m.id];
   const tabs = [];
   if(m.topics) tabs.push(['themen','Themen']);
+  if(m.lvs) tabs.push(['lv','LV-Prüfungen']);
   tabs.push(['notizen','Notizen'],['material','Material'],['literatur','Literatur'],['projekte','Projekte'],['karten','Lernkarten']);
   if(!tabs.some(t=>t[0]===modalTab)) modalTab = tabs[0][0];
 
@@ -668,9 +696,9 @@ function renderModal(){
     </div>
     <div class="mctl">
       <button class="status ${STATI.find(s=>s.k===st.status).cls}" id="m-status">${STATI.find(s=>s.k===st.status).label}</button>
-      <select id="m-grade" title="Note">
-        <option value="">Note –</option>${[1,2,3,4,5].map(n=>`<option ${String(n)===st.grade?'selected':''}>${n}</option>`).join('')}
-      </select>
+      ${m.lvs
+        ? `<span class="gradechip" title="gewichtet aus den LV-Prüfungen">Modulnote: ${st.grade?esc(st.grade):'–'}</span>`
+        : `<select id="m-grade" title="Note"><option value="">Note –</option>${[1,2,3,4,5].map(n=>`<option ${String(n)===st.grade?'selected':''}>${n}</option>`).join('')}</select>`}
       <label style="font-size:.7rem;color:var(--mut);font-weight:600">Abschluss <input type="month" id="m-date" value="${esc(st.date)}"/></label>
       <label style="font-size:.7rem;color:var(--mut);font-weight:600">Prüfungstermin <input type="date" id="m-exam" value="${esc(st.examDate)}"/></label>
       ${m.id==='MA'?`<label style="font-size:.7rem;color:var(--mut);font-weight:600">ECTS <input type="number" id="m-maects" min="1" max="40" value="${esc(state.maEcts)}" placeholder="${autoMaEcts()}" title="leer = automatisch Rest auf ${PROGRAM_ECTS}" style="width:58px;padding:4px 6px"/></label>`:''}
@@ -686,7 +714,8 @@ function renderModal(){
     st.status = STATI[(i+1)%STATI.length].k;
     save(false); renderModal();
   };
-  M.querySelector('#m-grade').onchange = e=>{ st.grade = e.target.value; save(false); };
+  const gradeSel = M.querySelector('#m-grade');
+  if(gradeSel) gradeSel.onchange = e=>{ st.grade = e.target.value; save(false); };
   M.querySelector('#m-date').onchange = e=>{ st.date = e.target.value; save(false); };
   M.querySelector('#m-exam').onchange = e=>{ st.examDate = e.target.value; save(false); };
   const ma = M.querySelector('#m-maects'); if(ma) ma.onchange = e=>{ state.maEcts = e.target.value; save(false); };
@@ -695,12 +724,74 @@ function renderModal(){
   if(adopt) adopt.onclick = ()=>{ st.examDate = m.sched.ex; save(false); renderModal(); toast('Prüfungstermin übernommen.'); };
 
   const body = document.getElementById('tabbody');
+  if(modalTab==='lv') renderLvExams(m, body);
   if(modalTab==='themen') renderTopics(m, body);
   if(modalTab==='notizen') renderNotes(m, body);
   if(modalTab==='material') renderMaterial(m, body);
   if(modalTab==='literatur') renderLit(m, body);
   if(modalTab==='projekte') renderProjects(m, body);
   if(modalTab==='karten') renderCards(m, body);
+}
+
+/* ── LV-Noten: gewichtete Modulnote berechnen & in st.grade schreiben ── */
+function recomputeModuleGrade(m){
+  if(!m.lvs) return;
+  const g = state.modules[m.id].lvg || {};
+  let sw=0, sum=0, present=0;
+  m.lvs.forEach((lv,i)=>{
+    const v = g[i] && g[i].grade ? Number(g[i].grade) : null;
+    if(v){ sum += v*lv.w; sw += lv.w; present++; }
+  });
+  // Modulnote = gewichteter Schnitt der vorhandenen LV-Noten (auf 0,1 gerundet)
+  state.modules[m.id].grade = sw ? String(Math.round(sum/sw*10)/10) : '';
+  return {val: sw?sum/sw:null, all: present===m.lvs.length};
+}
+
+/* ── Tab: LV-Prüfungen ── */
+function renderLvExams(m, body){
+  const st = state.modules[m.id];
+  const g = st.lvg;
+  body.innerHTML = '';
+  const info = document.createElement('div');
+  info.className = 'placeholder';
+  info.style.marginTop = '0';
+  info.textContent = 'Jede LV hat eine eigene Online-Prüfung. Note und Datum je LV eintragen — die Modulnote wird daraus gewichtet berechnet. Jede LV muss positiv (1–4) sein.';
+  body.appendChild(info);
+
+  m.lvs.forEach((lv,i)=>{
+    const cur = g[i] || {};
+    const grade = cur.grade || '';
+    const passed = grade ? (Number(grade)<=4) : null;
+    const row = document.createElement('div');
+    row.className = 'lvrow';
+    row.innerHTML = `
+      <div class="lvname"><b>${esc(lv.n)}</b><span class="lvmeta">${lv.typ} · ${lv.w}% der Modulnote</span></div>
+      <select class="lv-note" title="Note der LV-Prüfung">
+        <option value="">Note –</option>${[1,2,3,4,5].map(n=>`<option ${String(n)===grade?'selected':''}>${n}</option>`).join('')}
+      </select>
+      <input type="month" class="lv-date" value="${esc(cur.date||'')}" title="Prüfungsdatum"/>
+      <span class="lvstat ${passed===null?'':passed?'ok':'bad'}">${passed===null?'offen':passed?'✓ bestanden':'✗ nicht bestanden'}</span>`;
+    row.querySelector('.lv-note').onchange = e=>{
+      g[i] = Object.assign({}, g[i], {grade:e.target.value});
+      recomputeModuleGrade(m); save(false); renderLvExams(m, body);
+      const chip = document.querySelector('.gradechip');
+      if(chip) chip.textContent = 'Modulnote: '+(st.grade||'–');
+    };
+    row.querySelector('.lv-date').onchange = e=>{
+      g[i] = Object.assign({}, g[i], {date:e.target.value}); save(false);
+    };
+    body.appendChild(row);
+  });
+
+  const res = recomputeModuleGrade(m);
+  const sumRow = document.createElement('div');
+  sumRow.className = 'lvsum';
+  if(res && res.val!==null){
+    sumRow.innerHTML = `<b>Errechnete Modulnote: ${String(Math.round(res.val*10)/10)}</b> <span style="color:var(--mut)">${res.all?'(alle LV-Prüfungen vorhanden)':'(vorläufig — noch nicht alle LV bewertet)'}</span>`;
+  } else {
+    sumRow.innerHTML = `<span style="color:var(--mut)">Noch keine LV-Note eingetragen.</span>`;
+  }
+  body.appendChild(sumRow);
 }
 
 /* ── Tab: Literatur ── */
