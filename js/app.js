@@ -417,7 +417,9 @@ function render(){
   const root = document.getElementById('sections');
   root.innerHTML = '';
   PHASES.forEach(ph=>{
-    const mods = MODULES.filter(m=>m.phase===ph.id).filter(matchesSearch);
+    let mods = MODULES.filter(m=>m.phase===ph.id).filter(matchesSearch);
+    // Fachmodule in der tatsächlichen Unterrichtsreihenfolge (nach sched.von) zeigen
+    if(ph.id==='fach') mods = mods.slice().sort((a,b)=>((a.sched&&a.sched.von)||'').localeCompare((b.sched&&b.sched.von)||''));
     if(!mods.length) return;
     const sec = document.createElement('div');
     sec.className = 'section';

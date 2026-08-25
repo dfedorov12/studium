@@ -67,14 +67,16 @@ Fachstudium **Live-Online im WBS LearnSpace 3D®**, Start **29.09.2026**, Unterr
 |---|---|---|
 | VM1 Vorbereitungsmodul | 29.09.–20.10.2026 | **23.+24.10.2026** |
 | FM1 Einführung InfoSec & Kryptographie | 27.10.–15.12.2026 | **18.+19.12.2026** |
-| FM2 IT-Sicherheitsmgmt & IT-Forensik | 12.01.–02.03.2027 | **05.+06.03.2027** |
-| FM3 DR & Business Continuity Mgmt | 09.03.–27.04.2027 | **29.+30.04.2027** |
-| FM4 IT-Risikomanagement & Awareness | 04.05.–22.06.2027 | **25.+26.06.2027** |
+| FM4 IT-Risikomanagement & Awareness | 12.01.–02.03.2027 | **05.+06.03.2027** |
+| FM5 Technologie-Management | 09.03.–27.04.2027 | **29.+30.04.2027** |
+| FM6 IT-Recht, -Governance & -Compliance | 04.05.–22.06.2027 | **25.+26.06.2027** |
 | *Sommerpause* | Juli–Aug 2027 | |
-| FM5 Technologie-Management | 31.08.–19.10.2027 | **22.+23.10.2027** |
-| FM6 IT-Recht, -Governance & -Compliance | 27.10.–14.12.2027 | **17.+18.12.2027** |
+| FM2 IT-Sicherheitsmgmt & IT-Forensik | 31.08.–19.10.2027 | **22.+23.10.2027** |
+| FM3 DR & Business Continuity Mgmt | 27.10.–14.12.2027 | **17.+18.12.2027** |
 | VM2 Seminar zur Masterarbeit | 11.01.–01.02.2028 | **19.+20.02.2028** |
 | Masterarbeit | ab Vorkonzept-Genehmigung | max. 6 Monate |
+
+> Reihenfolge lt. aktualisiertem Ablaufplan: **VM1 → FM1 → FM4 → FM5 → FM6 → (Sommerpause) → FM2 → FM3 → VM2**.
 
 - **Basisstudium** (BPM/BWM) ist davon unabhängig — vor, während oder nach dem Fachstudium absolvierbar (Online-Selbststudium).
 - **Vertiefungsprojekt** (12 ECTS, nur MBA 120) läuft **während** des Fachstudiums; das begleitende **VPS** findet an **7 zusätzlichen Abendterminen** statt (Termine werden noch bekanntgegeben).
@@ -83,11 +85,9 @@ Fachstudium **Live-Online im WBS LearnSpace 3D®**, Start **29.09.2026**, Unterr
 ## 3. Abhängigkeitsgraph der Fachmodule
 
 ```
-BPM1 ──► VM1 ──► FM1 ──► FM2 ──┬──► FM3 ─┐
-  │                            ├──► FM4 ─┼──► FM5
-  │                            └──► FM6  │
+BPM1 ──► VM1 ──► FM1 ──► FM4 ──► FM5 ──► FM6 ──► FM2 ──► FM3 ──► VM2 ──► Masterarbeit
+  │                         (Sommerpause Juli–Aug 2027 zwischen FM6 und FM2)
   └──► VPS ──► VP (läuft parallel zum Fachstudium)
-VM1 + BPM1 ──► VM2 ──► Masterarbeit
 ```
 
 ---
