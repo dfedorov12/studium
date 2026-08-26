@@ -56,7 +56,7 @@ const MODULES = [
    topics:[{g:'Inhalte', items:['Lernumgebung LearnSpace 3D® & eCampus','Ablauf und Struktur der Module','PeerGroup-Bildung & erste Gruppenarbeit','Werkzeuge & Methoden für Gruppenarbeiten']}],
    lit:['Theisen: Wissenschaftliches Arbeiten — Erfolgreich bei Bachelor- und Masterarbeiten','HS Burgenland Online-Bibliothek (Videos & FAQs)','Zitationssoftware: Citavi und Zotero']},
   {id:'FM1', phase:'fach', name:'Einführung Informationssicherheit & angewandte Kryptographie', ects:7, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['VM1'],
-   sched:{von:'2026-10-27', bis:'2026-12-15', ex:'2026-12-18', ex2:'2026-12-19'},
+   sched:{von:'2026-10-27', bis:'2026-12-16', ex:'2026-12-18', ex2:'2026-12-19'},
    topics:[{g:'Inhalte', items:['Einführung in die Informationssicherheit','Grundbegriffe und Abgrenzungen','Einordnung ins Informationsmanagement','Geschichtliche Entwicklung der InfoSec','Methoden & Algorithmen der Kryptographie','Anwendungsfälle angewandter Kryptographie']}],
    lit:['Heinrich/Riedl: Informationsmanagement — Grundlagen, Aufgaben, Methoden','Pohlmann: Cyber-Sicherheit','Sowa: Management der Informationssicherheit — Kontrolle und Optimierung','Buchmann: Einführung in die Kryptographie']},
   {id:'FM2', phase:'fach', name:'IT-Sicherheitsmanagement & Grundlagen IT-Forensik', ects:7, exam:'Gruppenarbeit 40 % + mündl. Prüfung 60 %', deps:['FM6'],
